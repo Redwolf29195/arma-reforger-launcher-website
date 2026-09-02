@@ -4,14 +4,8 @@ armaveblaucher.playit.plus {
 		-Server
 	}
 
-	@updates path /updates/*
-	handle @updates {
-		reverse_proxy https://192.168.10.129 {
-			header_up Host armaveblaucher.playit.plus
-			transport http {
-				tls_server_name armaveblaucher.playit.plus
-			}
-		}
+	handle_path /updates/* {
+		redir https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/latest/download{uri} 302
 	}
 
 	handle {

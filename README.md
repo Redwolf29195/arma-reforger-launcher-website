@@ -38,7 +38,7 @@ The validated production topology is:
 ```text
 Internet -> Playit HTTPS tunnel -> Caddy :443 -> Node 127.0.0.1:4173
                                       |
-                                      +-> /updates/* -> update host
+                                      +-> /updates/* -> GitHub Releases
 ```
 
 1. Keep the Node server on `127.0.0.1:4173`.
@@ -46,7 +46,8 @@ Internet -> Playit HTTPS tunnel -> Caddy :443 -> Node 127.0.0.1:4173
 3. Import the included `Caddyfile` from the ALGZ Caddy gateway.
 4. Keep update executables outside this repository.
 5. Update `release.json` after every launcher build.
-6. Keep the Playit agent and the separate update host online.
+6. Keep the Playit agent online; update files are served by the separate
+   `arma-reforger-launcher-updates` GitHub repository.
 
 Useful health checks:
 
