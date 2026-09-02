@@ -7,6 +7,11 @@ The repository contains the website source and deployment helpers. Launcher
 installers, portable builds, logs, TLS keys and Playit credentials are not
 stored in Git.
 
+The launcher update channel remains separate:
+`https://github.com/Redwolf29195/arma-reforger-launcher-updates`.
+`update-channel/latest.yml` is a checked snapshot of the metadata consumed by
+the launcher updater; update binaries stay in GitHub Releases of that project.
+
 ## Local start
 
 Node.js 20 or newer is recommended. The release files are expected in the

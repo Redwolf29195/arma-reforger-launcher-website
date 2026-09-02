@@ -9,6 +9,7 @@ updates/
 *.msi
 *.zip
 latest.yml
+!update-channel/latest.yml
 *.blockmap
 
 # Local TLS and credentials
@@ -26,4 +27,3 @@ node_modules/
 Thumbs.db
 .vscode/
 .idea/
-
