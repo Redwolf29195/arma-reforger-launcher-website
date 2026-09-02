@@ -1,0 +1,21 @@
+armaveblaucher.playit.plus {
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	@updates path /updates/*
+	handle @updates {
+		reverse_proxy https://192.168.10.129 {
+			header_up Host armaveblaucher.playit.plus
+			transport http {
+				tls_server_name armaveblaucher.playit.plus
+			}
+		}
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy 127.0.0.1:4173
+	}
+}

@@ -1,0 +1,29 @@
+# Runtime output
+logs/
+*.log
+
+# Local release binaries and update payloads
+release/
+updates/
+*.exe
+*.msi
+*.zip
+latest.yml
+*.blockmap
+
+# Local TLS and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+
+# Dependencies and editor files
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

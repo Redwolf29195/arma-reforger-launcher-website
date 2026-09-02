@@ -1,0 +1,15 @@
+{
+  "name": "Arma Reforger Launcher",
+  "short_name": "AR Launcher",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111415",
+  "theme_color": "#111415",
+  "icons": [
+    {
+      "src": "/assets/site-logo.png?v=566a9195324e",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    }
+  ]
+}
