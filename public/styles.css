@@ -482,14 +482,73 @@ a {
 .launcher-figure {
   margin: 0;
   border: 1px solid #788083;
+  border-radius: 8px;
   background: var(--ink-soft);
   box-shadow: 20px 24px 0 #c2c6c0;
   overflow: hidden;
 }
 
-.launcher-figure > img {
+.launcher-gallery-stage {
+  position: relative;
+  aspect-ratio: 1380 / 850;
+  overflow: hidden;
+  outline: none;
+}
+
+.launcher-gallery-stage:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--amber);
+}
+
+.launcher-gallery-stage > img {
+  display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid rgba(245, 246, 242, 0.55);
+  border-radius: 2px;
+  color: var(--white);
+  background: rgba(17, 20, 21, 0.88);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+}
+
+.gallery-arrow:hover,
+.gallery-arrow:focus-visible {
+  border-color: var(--amber);
+  color: var(--ink);
+  background: var(--amber);
+  outline: none;
+}
+
+.gallery-arrow img {
+  width: 25px;
+  height: 25px;
+  filter: invert(1);
+}
+
+.gallery-arrow:hover img,
+.gallery-arrow:focus-visible img {
+  filter: none;
+}
+
+.gallery-arrow-previous {
+  left: 18px;
+}
+
+.gallery-arrow-next {
+  right: 18px;
 }
 
 .launcher-figure figcaption {
@@ -501,6 +560,40 @@ a {
   background: var(--ink);
   font-family: Consolas, monospace;
   font-size: 11px;
+}
+
+.gallery-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 42px;
+}
+
+.gallery-tabs button {
+  min-width: 132px;
+  padding: 13px 20px;
+  border: 1px solid #788083;
+  border-radius: 0;
+  color: #3f4748;
+  background: transparent;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+}
+
+.gallery-tabs button:hover,
+.gallery-tabs button:focus-visible {
+  border-color: var(--ink);
+  color: var(--ink);
+  outline: none;
+}
+
+.gallery-tabs button[aria-selected="true"] {
+  border-color: var(--ink);
+  color: var(--white);
+  background: var(--ink);
 }
 
 .workflow-section {
@@ -595,28 +688,6 @@ code {
   color: #c9cec7;
   font-size: 17px;
   line-height: 1.7;
-}
-
-.feature-stat {
-  display: flex;
-  align-items: end;
-  gap: 16px;
-  margin-top: 54px;
-  padding-top: 26px;
-  border-top: 1px solid rgba(245, 246, 242, 0.3);
-}
-
-.feature-stat strong {
-  color: var(--amber);
-  font-family: "Bahnschrift Condensed", "Arial Narrow", Arial, sans-serif;
-  font-size: 62px;
-  line-height: 0.85;
-}
-
-.feature-stat span {
-  max-width: 180px;
-  color: #c8cec5;
-  font-size: 12px;
 }
 
 .feature-list {
@@ -1067,6 +1138,30 @@ code {
   .launcher-figure figcaption {
     display: grid;
     gap: 4px;
+  }
+
+  .gallery-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gallery-arrow-previous {
+    left: 8px;
+  }
+
+  .gallery-arrow-next {
+    right: 8px;
+  }
+
+  .gallery-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 28px;
+  }
+
+  .gallery-tabs button {
+    min-width: 0;
+    padding-inline: 8px;
   }
 
   .workflow-grid {

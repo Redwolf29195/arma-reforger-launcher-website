@@ -17,7 +17,10 @@ const dynamicText = {
     unavailable: 'This file is temporarily unavailable.',
     downloadStarted: '{label} download started.',
     hashCopied: 'Setup SHA-256 copied.',
-    hashCopyFailed: 'Could not copy the hash.'
+    hashCopyFailed: 'Could not copy the hash.',
+    previousScreenshot: 'Previous screenshot',
+    nextScreenshot: 'Next screenshot',
+    showScreenshot: 'Show {title}'
   },
   ru: {
     openMenu: 'Открыть меню',
@@ -26,7 +29,10 @@ const dynamicText = {
     unavailable: 'Этот файл временно недоступен.',
     downloadStarted: 'Загрузка {label} началась.',
     hashCopied: 'SHA-256 установщика скопирован.',
-    hashCopyFailed: 'Не удалось скопировать хэш.'
+    hashCopyFailed: 'Не удалось скопировать хэш.',
+    previousScreenshot: 'Предыдущий скриншот',
+    nextScreenshot: 'Следующий скриншот',
+    showScreenshot: 'Показать раздел «{title}»'
   }
 };
 
@@ -48,9 +54,9 @@ const staticRussian = {
   'Release information': 'Информация о версии',
   'Version': 'Версия',
   '01 / INTERFACE': '01 / ИНТЕРФЕЙС',
-  'Mod library': 'Библиотека модов',
-  'Arma Reforger Launcher mod library': 'Экран модов Arma Reforger Launcher',
-  '277 mods indexed locally': '277 модов найдено на компьютере',
+  'Launcher interface': 'Интерфейс лаунчера',
+  'Launcher screenshot gallery': 'Галерея скриншотов лаунчера',
+  'Launcher screenshots': 'Скриншоты лаунчера',
   '02 / PRESETS': '02 / ПРЕСЕТЫ',
   'Launcher features': 'Возможности лаунчера',
   'Add the preset': 'Добавь пресет',
@@ -62,7 +68,6 @@ const staticRussian = {
   '03 / CONTROL': '03 / КОНТРОЛЬ',
   'Works with large libraries.': 'Работает с большой библиотекой.',
   'The scan reads mod metadata without unpacking archives, so checking hundreds of installed mods stays quick.': 'Лаунчер читает данные о модах, не распаковывая архивы. Поэтому проверка большой библиотеки остаётся быстрой.',
-  'mods in the test library': 'модов в тестовой библиотеке',
   'Saved presets': 'Сохранённые пресеты',
   'Keep separate mod lists for different servers and groups.': 'Храни отдельные наборы для разных серверов и игровых групп.',
   'Dependencies': 'Зависимости',
@@ -86,6 +91,25 @@ const staticRussian = {
 const originalText = new WeakMap();
 const originalAttributes = new WeakMap();
 let language = localStorage.getItem('armaLauncherSiteLanguage') === 'ru' ? 'ru' : 'en';
+
+const gallerySlides = [
+  {
+    image: '/assets/launcher-workshop.png?v=3eda1f9eb8da',
+    title: { en: 'Workshop', ru: 'Мастерская' },
+    alt: { en: 'Arma Reforger Launcher Workshop', ru: 'Мастерская Arma Reforger Launcher' }
+  },
+  {
+    image: '/assets/launcher-servers.png?v=60c054bebd7c',
+    title: { en: 'Servers', ru: 'Серверы' },
+    alt: { en: 'Arma Reforger Launcher server browser', ru: 'Список серверов Arma Reforger Launcher' }
+  },
+  {
+    image: '/assets/launcher-mods.png?v=e0e6485f9594',
+    title: { en: 'Mods', ru: 'Моды' },
+    alt: { en: 'Arma Reforger Launcher mods', ru: 'Моды Arma Reforger Launcher' }
+  }
+];
+let galleryIndex = 0;
 
 function text(key, parameters = {}) {
   const value = dynamicText[language][key] || dynamicText.en[key] || key;
@@ -142,6 +166,7 @@ function applyLanguage() {
     button.setAttribute('aria-pressed', String(active));
   });
   menuButton.title = mainNav.classList.contains('open') ? text('closeMenu') : text('openMenu');
+  renderLauncherGallery();
 }
 
 function setLanguage(nextLanguage) {
@@ -166,6 +191,48 @@ menuButton.addEventListener('click', () => setMenu(!mainNav.classList.contains('
 $$('#mainNav a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
 $$('[data-language]').forEach((button) => {
   button.addEventListener('click', () => setLanguage(button.dataset.language));
+});
+
+function renderLauncherGallery() {
+  const gallery = $('#launcherGallery');
+  if (!gallery) return;
+  const slide = gallerySlides[galleryIndex];
+  const image = $('#launcherGalleryImage');
+  image.src = slide.image;
+  image.alt = slide.alt[language];
+  $('#launcherGalleryCaption').textContent = `ARMA REFORGER LAUNCHER / ${slide.title[language].toUpperCase()}`;
+  $('#launcherGalleryCounter').textContent = `${String(galleryIndex + 1).padStart(2, '0')} / ${String(gallerySlides.length).padStart(2, '0')}`;
+
+  const previous = $('#galleryPrevious');
+  const next = $('#galleryNext');
+  previous.title = text('previousScreenshot');
+  previous.setAttribute('aria-label', text('previousScreenshot'));
+  next.title = text('nextScreenshot');
+  next.setAttribute('aria-label', text('nextScreenshot'));
+
+  $$('[data-gallery-index]').forEach((button, index) => {
+    const title = gallerySlides[index].title[language];
+    button.textContent = title;
+    button.setAttribute('aria-label', text('showScreenshot', { title }));
+    button.setAttribute('aria-selected', String(index === galleryIndex));
+    button.tabIndex = index === galleryIndex ? 0 : -1;
+  });
+}
+
+function showGallerySlide(index) {
+  galleryIndex = (index + gallerySlides.length) % gallerySlides.length;
+  renderLauncherGallery();
+}
+
+$('#galleryPrevious')?.addEventListener('click', () => showGallerySlide(galleryIndex - 1));
+$('#galleryNext')?.addEventListener('click', () => showGallerySlide(galleryIndex + 1));
+$$('[data-gallery-index]').forEach((button) => {
+  button.addEventListener('click', () => showGallerySlide(Number(button.dataset.galleryIndex)));
+});
+$('#launcherGallery')?.addEventListener('keydown', (event) => {
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+  event.preventDefault();
+  showGallerySlide(galleryIndex + (event.key === 'ArrowRight' ? 1 : -1));
 });
 
 const revealItems = $$('.reveal');

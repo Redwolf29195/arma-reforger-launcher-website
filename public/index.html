@@ -17,8 +17,8 @@
   <link rel="icon" href="/assets/app-icon.png?v=4df786cd119f" type="image/png">
   <link rel="apple-touch-icon" href="/assets/app-icon.png?v=4df786cd119f">
   <link rel="manifest" href="/site.webmanifest?v=5">
-  <link rel="stylesheet" href="/styles.css">
-  <script src="/app.js?v=b5e112c41ea2" defer></script>
+  <link rel="stylesheet" href="/styles.css?v=94d83cefcc1c">
+  <script src="/app.js?v=cf91df26b29a" defer></script>
 </head>
 <body>
   <header class="site-header" id="siteHeader">
@@ -88,16 +88,29 @@
       <div class="container">
         <header class="section-header reveal">
           <p class="eyebrow">01 / INTERFACE</p>
-          <h2>Mod library</h2>
+          <h2>Launcher interface</h2>
         </header>
 
-        <figure class="launcher-figure reveal clip-reveal">
-          <img src="/assets/launcher-ui.png" alt="Arma Reforger Launcher mod library" width="1380" height="850">
+        <figure class="launcher-figure launcher-gallery reveal" id="launcherGallery" aria-label="Launcher screenshot gallery" aria-roledescription="carousel">
+          <div class="launcher-gallery-stage" tabindex="0">
+            <img id="launcherGalleryImage" src="/assets/launcher-workshop.png?v=3eda1f9eb8da" alt="Arma Reforger Launcher Workshop" width="1380" height="850">
+            <button class="gallery-arrow gallery-arrow-previous" id="galleryPrevious" type="button" title="Previous screenshot" aria-label="Previous screenshot">
+              <img src="/assets/icons/chevron-left.svg" alt="">
+            </button>
+            <button class="gallery-arrow gallery-arrow-next" id="galleryNext" type="button" title="Next screenshot" aria-label="Next screenshot">
+              <img src="/assets/icons/chevron-right.svg" alt="">
+            </button>
+          </div>
           <figcaption>
-            <span>ARMA REFORGER LAUNCHER / MOD LIBRARY</span>
-            <span>277 mods indexed locally</span>
+            <span id="launcherGalleryCaption">ARMA REFORGER LAUNCHER / WORKSHOP</span>
+            <span id="launcherGalleryCounter">01 / 03</span>
           </figcaption>
         </figure>
+        <div class="gallery-tabs reveal" id="launcherGalleryTabs" role="tablist" aria-label="Launcher screenshots">
+          <button type="button" role="tab" data-gallery-index="0" aria-selected="true">Workshop</button>
+          <button type="button" role="tab" data-gallery-index="1" aria-selected="false">Servers</button>
+          <button type="button" role="tab" data-gallery-index="2" aria-selected="false">Mods</button>
+        </div>
       </div>
     </section>
 
@@ -137,10 +150,6 @@
           <p class="eyebrow">03 / CONTROL</p>
           <h2>Works with large libraries.</h2>
           <p>The scan reads mod metadata without unpacking archives, so checking hundreds of installed mods stays quick.</p>
-          <div class="feature-stat">
-            <strong>277</strong>
-            <span>mods in the test library</span>
-          </div>
         </header>
 
         <div class="feature-list">
