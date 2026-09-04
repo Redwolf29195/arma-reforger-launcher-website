@@ -4,6 +4,11 @@ armaveblaucher.playit.plus {
 		-Server
 	}
 
+	@downloadPage path /updates /updates/
+	handle @downloadPage {
+		redir * /#download 302
+	}
+
 	handle_path /updates/* {
 		redir https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/latest/download{uri} 302
 	}
