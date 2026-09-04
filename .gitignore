@@ -1,5 +1,6 @@
 # Runtime output
 logs/
+dist/
 *.log
 
 # Local release binaries and update payloads

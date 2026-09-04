@@ -12,6 +12,21 @@ The launcher update channel remains separate:
 `update-channel/latest.yml` is a checked snapshot of the metadata consumed by
 the launcher updater; update binaries stay in GitHub Releases of that project.
 
+## Cloudflare Pages
+
+Connect this repository with the Pages Git integration. Use branch `main`,
+framework preset `None`, build command `npm run build`, and output directory
+`dist`. Set `SITE_URL` to the production HTTPS address after choosing the
+project name. The build also supports `CF_PAGES_URL` as a fallback.
+
+The build copies only public website assets, generates release metadata and
+Pages redirects, and links installers directly to their versioned GitHub
+release. No local Node process, Playit tunnel, or running PC is required.
+The existing local deployment remains supported by `npm start`.
+
+When publishing a new launcher release, update `release.json` and push it to
+this repository. Cloudflare rebuilds the site from that metadata.
+
 ## Local start
 
 Node.js 20 or newer is recommended. The release files are expected in the
