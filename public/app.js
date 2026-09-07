@@ -23,7 +23,7 @@ const dynamicText = {
     previousScreenshot: 'Previous screenshot',
     nextScreenshot: 'Next screenshot',
     showScreenshot: 'Show {title}',
-    downloadCountLabel: 'Downloads',
+    downloadCountLabel: 'Launcher downloads',
     downloadCountUnavailable: 'Counter temporarily unavailable'
   },
   ru: {
@@ -37,7 +37,7 @@ const dynamicText = {
     previousScreenshot: 'Предыдущий скриншот',
     nextScreenshot: 'Следующий скриншот',
     showScreenshot: 'Показать раздел «{title}»',
-    downloadCountLabel: 'Скачиваний',
+    downloadCountLabel: 'Скачиваний лаунчера',
     downloadCountUnavailable: 'Счётчик временно недоступен'
   }
 };
@@ -334,9 +334,9 @@ function renderDownloadCount() {
   let label = text('downloadCountLabel');
   if (currentDownloadCount !== null && language === 'ru') {
     const words = { one: 'Скачивание', few: 'Скачивания', many: 'Скачиваний', other: 'Скачивания' };
-    label = words[new Intl.PluralRules('ru').select(currentDownloadCount)];
+    label = `${words[new Intl.PluralRules('ru').select(currentDownloadCount)]} лаунчера`;
   } else if (currentDownloadCount === 1 && language === 'en') {
-    label = 'Download';
+    label = 'Launcher download';
   }
   $('#downloadCountLabel').textContent = label;
   $('#downloadCounter').title = downloadCountUnavailable && currentDownloadCount === null ? text('downloadCountUnavailable') : '';
