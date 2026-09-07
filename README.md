@@ -28,6 +28,35 @@ The existing local deployment remains supported by `npm start`.
 When publishing a new launcher release, update `release.json` and push it to
 this repository. Cloudflare rebuilds the site from that metadata.
 
+## Website download counter
+
+The counter records new requests through `/get/setup` and `/get/portable`.
+Automatic launcher updates and the existing `/updates/*` links go directly to
+GitHub and do not increment it. HEAD requests and browser prefetches are also
+excluded. It counts download requests, not completed installations or unique
+users. No device IDs, installation confirmations, cookies, IP addresses or
+visitor profiles are stored by the counter.
+
+Before deploying the counter for the first time, create a Cloudflare D1 database
+named `algz-launcher-downloads`, execute `migrations/0001_download_counts.sql`,
+and bind that database to the production Pages project as `DOWNLOAD_COUNTER_DB`.
+Use a separate database for preview deployments so tests cannot change the
+public number. Do not deploy a production preview against the live counter.
+The existing GitHub download totals cannot be used as an initial value because
+they include automatic updates. This separate counter starts at zero.
+
+`GET /api/download-stats` returns the total and Setup/Portable breakdown.
+The page refreshes it once a minute while visible. A counter failure does not
+block downloads, and unavailable statistics are never presented as zero.
+The database persists across launcher releases and website deployments.
+
+For local development, Node.js 22.13+ uses SQLite in `logs/download-counts.sqlite`.
+Set `WEBSITE_COUNTER_PATH` to a separate file for tests. Older Node versions
+still serve downloads but cannot show local download statistics.
+Run `npm test` for counter concurrency, persistence, exclusion and failure checks.
+Pages Functions are restricted to `/get/*` and `/api/download-stats` by the
+generated `_routes.json`; static pages and the launcher updater stay separate.
+
 ## Local start
 
 Node.js 20 or newer is recommended. The release files are expected in the

@@ -8,6 +8,8 @@ const menuButton = $('#menuButton');
 const mainNav = $('#mainNav');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let currentRelease = null;
+let currentDownloadCount = null;
+let downloadCountUnavailable = false;
 
 const dynamicText = {
   en: {
@@ -20,7 +22,10 @@ const dynamicText = {
     hashCopyFailed: 'Could not copy the hash.',
     previousScreenshot: 'Previous screenshot',
     nextScreenshot: 'Next screenshot',
-    showScreenshot: 'Show {title}'
+    showScreenshot: 'Show {title}',
+    downloadCountLabel: 'Website downloads',
+    downloadCountHint: 'Setup and Portable · automatic updates excluded',
+    downloadCountUnavailable: 'Counter temporarily unavailable'
   },
   ru: {
     openMenu: 'Открыть меню',
@@ -32,7 +37,10 @@ const dynamicText = {
     hashCopyFailed: 'Не удалось скопировать хэш.',
     previousScreenshot: 'Предыдущий скриншот',
     nextScreenshot: 'Следующий скриншот',
-    showScreenshot: 'Показать раздел «{title}»'
+    showScreenshot: 'Показать раздел «{title}»',
+    downloadCountLabel: 'Скачиваний с сайта',
+    downloadCountHint: 'Setup и Portable · без автообновлений',
+    downloadCountUnavailable: 'Счётчик временно недоступен'
   }
 };
 
@@ -173,6 +181,7 @@ function setLanguage(nextLanguage) {
   language = nextLanguage === 'ru' ? 'ru' : 'en';
   localStorage.setItem('armaLauncherSiteLanguage', language);
   applyLanguage();
+  renderDownloadCount();
   if (currentRelease) {
     setDownloadAvailability('setup', currentRelease.downloads.setup);
     setDownloadAvailability('portable', currentRelease.downloads.portable);
@@ -294,7 +303,7 @@ function formatBytes(bytes) {
 
 function setDownloadAvailability(type, download) {
   $$(`[data-download="${type}"]`).forEach((link) => {
-    link.href = download.url;
+    link.href = `/get/${type}`;
     link.classList.toggle('is-disabled', !download.available);
     link.setAttribute('aria-disabled', String(!download.available));
   });
@@ -320,6 +329,26 @@ async function loadRelease() {
   } catch {
     $('#downloadStatus').textContent = text('releaseError');
   }
+}
+
+function renderDownloadCount() {
+  $('#downloadCount').textContent = currentDownloadCount === null ? '—' : currentDownloadCount.toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US');
+  $('#downloadCountLabel').textContent = text('downloadCountLabel');
+  $('#downloadCountHint').textContent = text(downloadCountUnavailable && currentDownloadCount === null ? 'downloadCountUnavailable' : 'downloadCountHint');
+}
+
+async function loadDownloadCount() {
+  try {
+    const response = await fetch('/api/download-stats', { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
+    if (!response.ok) throw new Error('Counter unavailable');
+    const stats = await response.json();
+    if (!Number.isSafeInteger(stats.total) || stats.total < 0 || stats.source !== 'website' || stats.excludesUpdates !== true) throw new Error('Invalid counter');
+    currentDownloadCount = stats.total;
+    downloadCountUnavailable = false;
+  } catch {
+    downloadCountUnavailable = true;
+  }
+  renderDownloadCount();
 }
 
 $$('[data-download]').forEach((link) => {
@@ -361,3 +390,5 @@ $('#copySetupHash').addEventListener('click', async (event) => {
 
 setLanguage(language);
 loadRelease();
+loadDownloadCount();
+setInterval(() => { if (!document.hidden) loadDownloadCount(); }, 60000);

@@ -1,6 +1,7 @@
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'dist');
@@ -29,7 +30,7 @@ for (const [kind, download] of Object.entries(release.downloads)) {
   redirects.push(`/downloads/${download.filename} ${download.url} 302`);
   html = html.replaceAll(
     new RegExp(`(data-download="${kind}" href=")[^"]+`, 'g'),
-    `$1${download.url}`
+    `$1/get/${kind}`
   );
   html = html.replaceAll(
     new RegExp(`(<[^>]+data-release-size="${kind}"[^>]*>)[^<]+`, 'g'),
@@ -52,10 +53,19 @@ if (siteUrl) {
     await writeFile(path.join(output, filename), content.replaceAll('https://armaveblaucher.playit.plus', origin));
   }
 }
+for (const asset of ['app.js', 'styles.css']) {
+  const digest = createHash('sha256').update(await readFile(path.join(output, asset))).digest('hex').slice(0, 12);
+  html = html.replaceAll(new RegExp(`(/${asset.replace('.', '\\.')})(?:\\?v=[^"\\s]*)?(?=")`, 'g'), `$1?v=${digest}`);
+}
 await writeFile(path.join(output, 'index.html'), html);
 await writeFile(path.join(output, 'release.json'), `${JSON.stringify(release, null, 2)}\n`);
 await writeFile(path.join(output, 'health.json'), JSON.stringify({ status: 'ok', version: release.version }));
 await writeFile(path.join(output, '_redirects'), `${redirects.join('\n')}\n`);
+await writeFile(path.join(output, '_routes.json'), JSON.stringify({
+  version: 1,
+  include: ['/get/*', '/api/download-stats', '/api/download-stats/'],
+  exclude: []
+}));
 await writeFile(path.join(output, '_headers'), `/*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

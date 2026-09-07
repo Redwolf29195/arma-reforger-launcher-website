@@ -3,6 +3,8 @@ import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { downloadFromWebsite, downloadStats } from './lib/download-counter.mjs';
+import { createLocalCounter } from './lib/local-counter.mjs';
 
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 const publicDirectory = path.join(rootDirectory, 'public');
@@ -12,6 +14,12 @@ const releaseDirectory = path.resolve(
 const host = process.env.HOST || '127.0.0.1';
 const port = Number.parseInt(process.env.PORT || '4173', 10);
 const releaseMetadata = JSON.parse(await readFile(path.join(rootDirectory, 'release.json'), 'utf8'));
+let counterDatabase = null;
+try {
+  counterDatabase = await createLocalCounter(process.env.WEBSITE_COUNTER_PATH || path.join(rootDirectory, 'logs', 'download-counts.sqlite'));
+} catch {
+  console.warn('Local download counter unavailable; use Node.js 22.13+ or Cloudflare Pages with its D1 binding.');
+}
 
 const downloadFiles = new Set(
   Object.values(releaseMetadata.downloads).map((download) => download.filename)
@@ -157,6 +165,16 @@ const server = createServer(async (request, response) => {
         };
       }
       sendJson(response, 200, { ...releaseMetadata, downloads });
+      return;
+    }
+
+    if (pathname === '/api/download-stats' || pathname === '/api/download-stats/' || pathname.startsWith('/get/')) {
+      const webRequest = new Request(requestUrl, { method: request.method, headers: request.headers });
+      const result = pathname.startsWith('/get/')
+        ? await downloadFromWebsite(webRequest, pathname.slice(5).replace(/\/$/, ''), { database: counterDatabase, loadRelease: async () => releaseMetadata })
+        : await downloadStats(webRequest, counterDatabase);
+      response.writeHead(result.status, Object.fromEntries(result.headers));
+      response.end(request.method === 'HEAD' ? undefined : Buffer.from(await result.arrayBuffer()));
       return;
     }
 

@@ -423,6 +423,56 @@ a {
   color: var(--white);
 }
 
+.download-counter {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 20px;
+  padding: 13px 17px;
+  border: 1px solid rgba(245, 246, 242, 0.2);
+  border-left: 3px solid var(--amber);
+  background: rgba(11, 13, 14, 0.65);
+}
+
+.download-counter > img {
+  flex: none;
+  filter: invert(1);
+}
+
+.download-counter-copy {
+  min-width: 0;
+}
+
+.download-counter-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+}
+
+.download-counter strong {
+  color: var(--amber);
+  font-size: 28px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.download-counter-heading span {
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.download-counter small {
+  display: block;
+  margin-top: 4px;
+  color: #c9ccc7;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .scroll-cue {
   position: absolute;
   z-index: 2;
@@ -1072,7 +1122,7 @@ code {
   }
 
   .hero {
-    min-height: 640px;
+    min-height: 750px;
     height: 82svh;
   }
 

@@ -24,6 +24,7 @@ latest.yml
 
 # Dependencies and editor files
 node_modules/
+.wrangler/
 .DS_Store
 Thumbs.db
 .vscode/
