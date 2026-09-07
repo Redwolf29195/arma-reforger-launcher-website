@@ -17,8 +17,8 @@
   <link rel="icon" href="/assets/app-icon.png?v=4df786cd119f" type="image/png">
   <link rel="apple-touch-icon" href="/assets/app-icon.png?v=4df786cd119f">
   <link rel="manifest" href="/site.webmanifest?v=5">
-  <link rel="stylesheet" href="/styles.css?v=7ac0c8874f92">
-  <script src="/app.js?v=216dd05ed3a4" defer></script>
+  <link rel="stylesheet" href="/styles.css?v=b2cf5ef6d304">
+  <script src="/app.js?v=41573ca0b931" defer></script>
 </head>
 <body>
   <header class="site-header" id="siteHeader">
@@ -79,13 +79,6 @@
           <span>Version <b data-release-version>0.3.42</b></span>
           <span>Windows 10/11 x64</span>
           <span><b data-release-size="setup">82.1 MB</b></span>
-        </div>
-        <div class="download-counter reveal" data-reveal-delay="4" id="downloadCounter">
-          <img src="/assets/icons/download.svg" alt="" width="22" height="22">
-          <div class="download-counter-copy">
-            <div class="download-counter-heading"><strong id="downloadCount" aria-live="polite">—</strong><span id="downloadCountLabel">Website downloads</span></div>
-            <small id="downloadCountHint">Setup and Portable · automatic updates excluded</small>
-          </div>
         </div>
       </div>
 
@@ -184,8 +177,16 @@
       <div class="container">
         <header class="download-heading reveal">
           <p class="eyebrow">04 / DOWNLOAD</p>
-          <h2>Installation options</h2>
-          <p>Choose the installer or the portable build for Windows 10/11 x64.</p>
+          <div class="download-heading-copy">
+            <h2>Installation options</h2>
+            <p>Choose the installer or the portable build for Windows 10/11 x64.</p>
+          </div>
+          <div class="download-counter" id="downloadCounter">
+            <img src="/assets/icons/download.svg" alt="" width="22" height="22">
+            <div class="download-counter-copy">
+              <div class="download-counter-heading"><strong id="downloadCount" aria-live="polite">—</strong><span id="downloadCountLabel">Downloads</span></div>
+            </div>
+          </div>
         </header>
 
         <div class="release-list reveal">

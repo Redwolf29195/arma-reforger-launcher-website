@@ -23,8 +23,7 @@ const dynamicText = {
     previousScreenshot: 'Previous screenshot',
     nextScreenshot: 'Next screenshot',
     showScreenshot: 'Show {title}',
-    downloadCountLabel: 'Website downloads',
-    downloadCountHint: 'Setup and Portable · automatic updates excluded',
+    downloadCountLabel: 'Downloads',
     downloadCountUnavailable: 'Counter temporarily unavailable'
   },
   ru: {
@@ -38,8 +37,7 @@ const dynamicText = {
     previousScreenshot: 'Предыдущий скриншот',
     nextScreenshot: 'Следующий скриншот',
     showScreenshot: 'Показать раздел «{title}»',
-    downloadCountLabel: 'Скачиваний с сайта',
-    downloadCountHint: 'Setup и Portable · без автообновлений',
+    downloadCountLabel: 'Скачиваний',
     downloadCountUnavailable: 'Счётчик временно недоступен'
   }
 };
@@ -333,8 +331,15 @@ async function loadRelease() {
 
 function renderDownloadCount() {
   $('#downloadCount').textContent = currentDownloadCount === null ? '—' : currentDownloadCount.toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US');
-  $('#downloadCountLabel').textContent = text('downloadCountLabel');
-  $('#downloadCountHint').textContent = text(downloadCountUnavailable && currentDownloadCount === null ? 'downloadCountUnavailable' : 'downloadCountHint');
+  let label = text('downloadCountLabel');
+  if (currentDownloadCount !== null && language === 'ru') {
+    const words = { one: 'Скачивание', few: 'Скачивания', many: 'Скачиваний', other: 'Скачивания' };
+    label = words[new Intl.PluralRules('ru').select(currentDownloadCount)];
+  } else if (currentDownloadCount === 1 && language === 'en') {
+    label = 'Download';
+  }
+  $('#downloadCountLabel').textContent = label;
+  $('#downloadCounter').title = downloadCountUnavailable && currentDownloadCount === null ? text('downloadCountUnavailable') : '';
 }
 
 async function loadDownloadCount() {

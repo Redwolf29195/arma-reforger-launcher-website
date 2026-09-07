@@ -429,11 +429,9 @@ a {
   gap: 13px;
   width: fit-content;
   max-width: 100%;
-  margin-top: 20px;
-  padding: 13px 17px;
-  border: 1px solid rgba(245, 246, 242, 0.2);
-  border-left: 3px solid var(--amber);
-  background: rgba(11, 13, 14, 0.65);
+  padding: 18px 22px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
 }
 
 .download-counter > img {
@@ -463,14 +461,6 @@ a {
   color: var(--white);
   font-size: 13px;
   font-weight: 700;
-}
-
-.download-counter small {
-  display: block;
-  margin-top: 4px;
-  color: #c9ccc7;
-  font-size: 11px;
-  line-height: 1.4;
 }
 
 .scroll-cue {
@@ -773,7 +763,7 @@ code {
 
 .download-heading {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 30px;
   margin-bottom: 48px;
@@ -784,9 +774,9 @@ code {
   color: #6e4312;
 }
 
-.download-heading > p:last-child {
-  max-width: 360px;
-  margin: 0 0 5px;
+.download-heading-copy > p {
+  max-width: 620px;
+  margin: 22px 0 0;
   color: #493619;
 }
 
@@ -1122,7 +1112,7 @@ code {
   }
 
   .hero {
-    min-height: 750px;
+    min-height: 640px;
     height: 82svh;
   }
 
@@ -1243,6 +1233,10 @@ code {
 
   .download-heading .eyebrow {
     grid-column: auto;
+  }
+
+  .download-counter {
+    width: 100%;
   }
 
   .release-row {
