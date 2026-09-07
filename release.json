@@ -1,20 +1,20 @@
 {
-  "version": "0.3.30",
-  "publishedAt": "2026-09-03T11:17:25Z",
+  "version": "0.3.42",
+  "publishedAt": "2026-09-07T18:58:59Z",
   "platform": "Windows 10/11 x64",
   "downloads": {
     "setup": {
-      "filename": "Arma-Reforger-Launcher-0.3.30-x64-Setup.exe",
-      "bytes": 85904971,
-      "sha256": "4A45A01B9CECCFF0AA7903C8279BC37F0BA028A42AEE5F4BC4B6C63D15B92A65",
-      "url": "/updates/Arma-Reforger-Launcher-0.3.30-x64-Setup.exe",
+      "filename": "Arma-Reforger-Launcher-0.3.42-x64-Setup.exe",
+      "bytes": 86066542,
+      "sha256": "4C57097D766A5040D6175A82412C502DDE22D8F8163DDEBCDD361B02D8378ABA",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.42/Arma-Reforger-Launcher-0.3.42-x64-Setup.exe",
       "available": true
     },
     "portable": {
-      "filename": "Arma-Reforger-Launcher-0.3.30-x64-Portable.exe",
-      "bytes": 85626096,
-      "sha256": "85F764D2D17BF0A0003D3053C1AC70F522EE9E830FB97427138EDA4F0E79A805",
-      "url": "/updates/Arma-Reforger-Launcher-0.3.30-x64-Portable.exe",
+      "filename": "Arma-Reforger-Launcher-0.3.42-x64-Portable.exe",
+      "bytes": 85787674,
+      "sha256": "7AD5427951833D60556E627C4727833B59B477C867F4656CE9574E2B8004639D",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.42/Arma-Reforger-Launcher-0.3.42-x64-Portable.exe",
       "available": true
     }
   }

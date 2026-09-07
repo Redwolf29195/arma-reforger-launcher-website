@@ -31,6 +31,10 @@ for (const [kind, download] of Object.entries(release.downloads)) {
     new RegExp(`(data-download="${kind}" href=")[^"]+`, 'g'),
     `$1${download.url}`
   );
+  html = html.replaceAll(
+    new RegExp(`(<[^>]+data-release-size="${kind}"[^>]*>)[^<]+`, 'g'),
+    `$1${(download.bytes / 1024 / 1024).toFixed(1)} MB`
+  );
 }
 const setup = release.downloads.setup.filename;
 for (const suffix of ['.blockmap', '.algz.json']) {
