@@ -331,14 +331,7 @@ async function loadRelease() {
 
 function renderDownloadCount() {
   $('#downloadCount').textContent = currentDownloadCount === null ? '—' : currentDownloadCount.toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US');
-  let label = text('downloadCountLabel');
-  if (currentDownloadCount !== null && language === 'ru') {
-    const words = { one: 'Скачивание', few: 'Скачивания', many: 'Скачиваний', other: 'Скачивания' };
-    label = `${words[new Intl.PluralRules('ru').select(currentDownloadCount)]} лаунчера`;
-  } else if (currentDownloadCount === 1 && language === 'en') {
-    label = 'Launcher download';
-  }
-  $('#downloadCountLabel').textContent = label;
+  $('#downloadCountLabel').textContent = text('downloadCountLabel');
   $('#downloadCounter').title = downloadCountUnavailable && currentDownloadCount === null ? text('downloadCountUnavailable') : '';
 }
 
