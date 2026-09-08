@@ -5,9 +5,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { downloadFromWebsite, downloadStats } from './lib/download-counter.mjs';
 import { createLocalCounter } from './lib/local-counter.mjs';
+import { contentSecurityPolicy } from './lib/site-config.mjs';
 
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 const publicDirectory = path.join(rootDirectory, 'public');
+const securityPolicy = contentSecurityPolicy(await readFile(path.join(publicDirectory, 'index.html'), 'utf8'));
 const releaseDirectory = path.resolve(
   process.env.LAUNCHER_RELEASE_DIR || path.join(rootDirectory, '..', 'release')
 );
@@ -38,6 +40,7 @@ const mimeTypes = new Map([
   ['.js', 'text/javascript; charset=utf-8'],
   ['.json', 'application/json; charset=utf-8'],
   ['.png', 'image/png'],
+  ['.webp', 'image/webp'],
   ['.svg', 'image/svg+xml'],
   ['.txt', 'text/plain; charset=utf-8'],
   ['.yml', 'text/yaml; charset=utf-8'],
@@ -52,7 +55,7 @@ function setSecurityHeaders(response) {
   response.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   response.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    securityPolicy
   );
 }
 
@@ -61,13 +64,15 @@ function sendJson(response, statusCode, value) {
   response.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(body),
-    'Cache-Control': 'no-store'
+    'Cache-Control': 'no-store',
+    'X-Robots-Tag': 'noindex'
   });
   response.end(body);
 }
 
 async function sendFile(request, response, filePath, options = {}) {
   const fileStats = await stat(filePath);
+  if (!fileStats.isFile()) throw Object.assign(new Error('Not a file'), { code: 'ENOENT' });
   const rangeHeader = request.headers.range;
   const headers = {
     'Content-Type': options.contentType || mimeTypes.get(path.extname(filePath).toLowerCase()) || 'application/octet-stream',
@@ -218,6 +223,7 @@ const server = createServer(async (request, response) => {
     });
   } catch (error) {
     if (error?.code === 'ENOENT') {
+      response.setHeader('X-Robots-Tag', 'noindex');
       try {
         await sendFile(request, response, path.join(publicDirectory, '404.html'), {
           cacheControl: 'no-cache',
@@ -234,6 +240,6 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`ArmaLauncher website: http://${host}:${port}`);
+  console.log(`ArmaLauncher website: http://${host}:${server.address().port}`);
   console.log(`Release directory: ${releaseDirectory}`);
 });

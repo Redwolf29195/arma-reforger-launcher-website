@@ -2,9 +2,12 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { validateSiteUrl, contentSecurityPolicy } from '../lib/site-config.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'dist');
+validateSiteUrl(process.env.SITE_URL);
+const isPreview = process.env.CF_PAGES === '1' && process.env.CF_PAGES_BRANCH && process.env.CF_PAGES_BRANCH !== 'main';
 const release = JSON.parse(await readFile(path.join(root, 'release.json'), 'utf8'));
 if (!/^\d+\.\d+\.\d+$/.test(release.version)) throw new Error('Invalid release version');
 const releases = 'https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases';
@@ -44,15 +47,7 @@ for (const suffix of ['.blockmap', '.algz.json']) {
 
 // A build pins filenames to their release so later releases cannot break existing links.
 html = html.replace(/(<[^>]+data-release-version[^>]*>)[^<]+/g, `$1${release.version}`);
-const siteUrl = process.env.SITE_URL || process.env.CF_PAGES_URL;
-if (siteUrl) {
-  const origin = new URL(siteUrl).origin;
-  html = html.replaceAll('https://armaveblaucher.playit.plus', origin);
-  for (const filename of ['robots.txt', 'sitemap.xml']) {
-    const content = await readFile(path.join(output, filename), 'utf8');
-    await writeFile(path.join(output, filename), content.replaceAll('https://armaveblaucher.playit.plus', origin));
-  }
-}
+html = html.replace(/data-copy-hash="[^"]*"/, `data-copy-hash="${release.downloads.setup.sha256}"`);
 for (const asset of ['app.js', 'styles.css']) {
   const digest = createHash('sha256').update(await readFile(path.join(output, asset))).digest('hex').slice(0, 12);
   html = html.replaceAll(new RegExp(`(/${asset.replace('.', '\\.')})(?:\\?v=[^"\\s]*)?(?=")`, 'g'), `$1?v=${digest}`);
@@ -71,10 +66,20 @@ await writeFile(path.join(output, '_headers'), `/*
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: ${contentSecurityPolicy(html)}
+${isPreview ? '  X-Robots-Tag: noindex\n' : ''}/404
+  X-Robots-Tag: noindex
+/404.html
+  X-Robots-Tag: noindex
 /release.json
   Cache-Control: no-cache
+  X-Robots-Tag: noindex
 /api/release
   Cache-Control: no-cache
+  X-Robots-Tag: noindex
+/health
+  X-Robots-Tag: noindex
+/health.json
+  X-Robots-Tag: noindex
 `);
 console.log(`Cloudflare Pages build ready: dist (release ${release.version})`);
