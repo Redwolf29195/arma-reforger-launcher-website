@@ -77,8 +77,31 @@ For local development, Node.js 22.13+ uses SQLite in `logs/download-counts.sqlit
 Set `WEBSITE_COUNTER_PATH` to a separate file for tests. Older Node versions
 still serve downloads but cannot show local download statistics.
 Run `npm test` for counter concurrency, persistence, exclusion and failure checks.
-Pages Functions are restricted to `/get/*` and `/api/download-stats` by the
-generated `_routes.json`; static pages and the launcher updater stay separate.
+Pages Functions are restricted to `/get/*`, `/api/download-stats` and `/store/*`
+by the generated `_routes.json`; static pages and the launcher updater stay separate.
+
+## Direct installer links for Microsoft Store
+
+`/store/0.3.42/Arma-Reforger-Launcher-0.3.42-x64-Setup.exe` returns the existing
+public Setup directly, with HTTP 200 for GET/HEAD and 206 for valid GET ranges.
+The Pages Function resolves the GitHub redirect on the server and streams the
+binary without buffering it. It does not set visitor cookies or increment the
+website download counter, so Store checks and downloads are not counted as
+website button downloads. `/get/*` and the launcher update channel keep their
+existing behavior.
+
+The independent allowlist in `lib/store-download.mjs` pins the versioned source
+URL, GitHub blob path, upstream ETag, exact size and verified SHA-256. A replaced
+or missing release asset fails closed instead of silently serving another build.
+Only the known GitHub download host is allowed; client cookies and authorization
+headers are never forwarded. Unknown versions return 404. Do not add `latest`
+aliases or change existing entries when publishing a new launcher version: add
+a new immutable URL and keep each previously submitted asset available.
+
+The route fixes download URL handling only. It does not sign, rebuild or certify
+the installer. Version 0.3.42 is the already published ALGZ-protected build; its
+Windows Authenticode status is NotSigned. Store package/signing requirements
+still need to be satisfied separately before completing certification.
 
 ## Local start
 

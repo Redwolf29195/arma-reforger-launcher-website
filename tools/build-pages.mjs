@@ -58,7 +58,7 @@ await writeFile(path.join(output, 'health.json'), JSON.stringify({ status: 'ok',
 await writeFile(path.join(output, '_redirects'), `${redirects.join('\n')}\n`);
 await writeFile(path.join(output, '_routes.json'), JSON.stringify({
   version: 1,
-  include: ['/get/*', '/api/download-stats', '/api/download-stats/'],
+  include: ['/get/*', '/api/download-stats', '/api/download-stats/', '/store/*'],
   exclude: []
 }));
 await writeFile(path.join(output, '_headers'), `/*

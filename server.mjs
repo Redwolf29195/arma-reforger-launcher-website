@@ -1,11 +1,14 @@
 import { createReadStream } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { downloadFromWebsite, downloadStats } from './lib/download-counter.mjs';
 import { createLocalCounter } from './lib/local-counter.mjs';
 import { contentSecurityPolicy } from './lib/site-config.mjs';
+import { downloadStoreInstaller } from './lib/store-download.mjs';
 
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 const publicDirectory = path.join(rootDirectory, 'public');
@@ -180,6 +183,16 @@ const server = createServer(async (request, response) => {
         : await downloadStats(webRequest, counterDatabase);
       response.writeHead(result.status, Object.fromEntries(result.headers));
       response.end(request.method === 'HEAD' ? undefined : Buffer.from(await result.arrayBuffer()));
+      return;
+    }
+
+    if (pathname.startsWith('/store/')) {
+      const result = await downloadStoreInstaller(new Request(requestUrl, { method: request.method, headers: request.headers }));
+      response.writeHead(result.status, Object.fromEntries(result.headers));
+      if (result.body && request.method !== 'HEAD') {
+        try { await pipeline(Readable.fromWeb(result.body), response); }
+        catch { response.destroy(); }
+      } else response.end();
       return;
     }
 

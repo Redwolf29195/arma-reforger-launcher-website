@@ -55,7 +55,7 @@ test('production build has one canonical site, valid metadata and compatible dow
     assert.ok(redirects.includes(`/updates/${download.filename} ${download.url} 302`));
   }
   assert.ok(redirects.includes('/updates/latest.yml https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/latest/download/latest.yml 302'));
-  assert.deepEqual(JSON.parse(await read(dist, '_routes.json')).include, ['/get/*', '/api/download-stats', '/api/download-stats/']);
+  assert.deepEqual(JSON.parse(await read(dist, '_routes.json')).include, ['/get/*', '/api/download-stats', '/api/download-stats/', '/store/*']);
   for (const [, src] of html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)/g)) await readFile(path.join(dist, src));
   for (const [img] of html.matchAll(/<img\b[^>]*>/g)) assert.ok(/width="\d+"/.test(img) && /height="\d+"/.test(img), img);
   build({ CF_PAGES_BRANCH: 'seo-preview' });
@@ -84,6 +84,9 @@ test('local HTTP serves indexable HTML, real 404s and safe download HEAD request
     assert.match(await response.text(), /Page not found/);
   }
   assert.equal((await fetch(address + '/api/release')).status, 200);
+  const unknownStoreInstaller = await fetch(address + '/store/0.0.0/missing.exe');
+  assert.equal(unknownStoreInstaller.status, 404);
+  assert.equal(unknownStoreInstaller.headers.get('location'), null);
   for (const kind of ['setup', 'portable']) {
     const response = await fetch(`${address}/get/${kind}`, { method: 'HEAD', redirect: 'manual' });
     assert.equal(response.status, 302);
