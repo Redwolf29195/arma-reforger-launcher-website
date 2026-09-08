@@ -1,7 +1,7 @@
 # Arma Reforger Launcher website
 
 Source for the ALGZ Arma Reforger Launcher download website published at
-`https://armalaucher.com` on Cloudflare Pages.
+`https://armalauncher.net` on Cloudflare Pages.
 
 The repository contains the website source and deployment helpers. Launcher
 installers, portable builds, logs, TLS keys and Playit credentials are not
@@ -16,7 +16,7 @@ the launcher updater; update binaries stay in GitHub Releases of that project.
 
 Connect this repository with the Pages Git integration. Use branch `main`,
 framework preset `None`, build command `npm run build`, and output directory
-`dist`. Set production `SITE_URL` to `https://armalaucher.com`.
+`dist`. Set production `SITE_URL` to `https://armalauncher.net`.
 The project is `algz-arma-launcher`, with `algz-arma-launcher.pages.dev`
 as its fallback hostname. The build also supports `CF_PAGES_URL` as a fallback.
 
