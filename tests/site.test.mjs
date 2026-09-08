@@ -89,5 +89,14 @@ test('local HTTP serves indexable HTML, real 404s and safe download HEAD request
     assert.equal(response.status, 302);
     assert.match(response.headers.get('location'), /^https:\/\/github.com\/Redwolf29195\/arma-reforger-launcher-updates\/releases\/download\//);
   }
-  assert.equal((await (await fetch(address + '/api/download-stats')).json()).total, 0);
+  const initialStats = await fetch(address + '/api/download-stats');
+  assert.equal((await initialStats.json()).total, 0);
+  const cookie = initialStats.headers.get('set-cookie').split(';')[0];
+  assert.match(cookie, /^arma_download=/);
+  for (const kind of ['setup', 'portable', 'setup']) {
+    const response = await fetch(`${address}/get/${kind}`, { headers: { Cookie: cookie }, redirect:'manual' });
+    assert.equal(response.status, 302);
+    assert.match(response.headers.get('location'), /^https:\/\/github.com\//);
+  }
+  assert.equal((await (await fetch(address + '/api/download-stats')).json()).total, 1);
 });

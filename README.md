@@ -32,22 +32,43 @@ this repository. Cloudflare rebuilds the site from that metadata.
 
 ## Website download counter
 
-The counter records new requests through `/get/setup` and `/get/portable`.
+The counter records the first download per browser through `/get/setup` or
+`/get/portable`. Both formats and future releases share the same browser ID.
 Automatic launcher updates and the existing `/updates/*` links go directly to
 GitHub and do not increment it. HEAD requests and browser prefetches are also
-excluded. It counts download requests, not completed installations or unique
-users. No device IDs, installation confirmations, cookies, IP addresses or
-visitor profiles are stored by the counter.
+excluded. It counts browser download attempts, not completed installations or
+verified people. Registration is not required.
+
+A random first-party cookie identifies the browser. On HTTPS it is named
+`__Host-arma_download`, with Secure, HttpOnly, SameSite=Lax and Path=/; local HTTP
+uses `arma_download`. Its requested lifetime is 400 days and is renewed on visits.
+Browsers can expire it sooner. The database stores only the random ID and first
+download format; no IP addresses, fingerprints or account information are used.
+Clearing cookies, another browser or another device can create another count.
+
+The statistics request prepares this cookie without recording a download.
+A direct download link without a cookie makes one same-site redirect to check
+that the browser accepts it. If cookies are blocked, the file still downloads
+and the request is not counted. Responses containing browser cookies are never
+cached. A unique database key and an insert trigger make the first increment
+atomic, including concurrent requests. A failed write can be retried later.
 
 Before deploying the counter for the first time, create a Cloudflare D1 database
-named `algz-launcher-downloads`, execute `migrations/0001_download_counts.sql`,
+named `algz-launcher-downloads`, execute the numbered SQL files in `migrations/`
+in order,
 and bind that database to the production Pages project as `DOWNLOAD_COUNTER_DB`.
 Use a separate database for preview deployments so tests cannot change the
 public number. Do not deploy a production preview against the live counter.
-The existing GitHub download totals cannot be used as an initial value because
-they include automatic updates. This separate counter starts at zero.
+Before deploying browser deduplication to an existing database, apply
+`migrations/0002_unique_downloads.sql`. It adds the visitor table and trigger
+without changing existing totals. Historical requests cannot be deduplicated
+because their browser IDs were never stored. A new empty database starts at zero;
+GitHub download totals cannot be used as its initial value because they include
+automatic updates.
 
-`GET /api/download-stats` returns the total and Setup/Portable breakdown.
+`GET /api/download-stats` retains the total and Setup/Portable response fields.
+New downloads are attributed only to the first format requested by a browser,
+so Setup plus Portable still equals the overall total.
 The page refreshes it once a minute while visible. A counter failure does not
 block downloads, and unavailable statistics are never presented as zero.
 The database persists across launcher releases and website deployments.
