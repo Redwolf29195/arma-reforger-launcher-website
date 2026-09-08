@@ -864,6 +864,10 @@ code {
   pointer-events: none;
 }
 
+.download-alternative {
+  margin-top: 24px;
+}
+
 .release-verification {
   display: flex;
   justify-content: space-between;
