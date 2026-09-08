@@ -270,15 +270,30 @@ const sectionLinks = new Map(
   $$('[data-section-link]').map((link) => [link.dataset.sectionLink, link])
 );
 
-if ('IntersectionObserver' in window) {
-  const sectionObserver = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
-    if (!visible) return;
-    sectionLinks.forEach((link, id) => link.classList.toggle('active', id === visible.target.id));
-  }, { rootMargin: '-28% 0px -55% 0px', threshold: [0, 0.2, 0.5] });
-  $$('[data-page-section]').forEach((section) => sectionObserver.observe(section));
+const pageSections = $$('[data-page-section]');
+
+function updateSectionNavigation() {
+  if (!pageSections.length) return;
+  // Inspect every section: observer entries contain only changed intersections,
+  // so they can leave the previous dot selected after a fast or reverse scroll.
+  const activationLine = Math.min(window.innerHeight / 2,
+    header.getBoundingClientRect().bottom + window.innerHeight * 0.2);
+  let currentSection = pageSections[0];
+  for (const section of pageSections) {
+    if (section.getBoundingClientRect().top > activationLine) break;
+    currentSection = section;
+  }
+  // A short final section cannot always reach the activation line.
+  if (window.scrollY > 0
+    && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+    currentSection = pageSections[pageSections.length - 1];
+  }
+  sectionLinks.forEach((link, id) => {
+    const active = id === currentSection.id;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
 }
 
 let scrollScheduled = false;
@@ -289,14 +304,23 @@ function updateScrollEffects() {
     const shift = Math.min(scrollTop * 0.12, 72);
     document.documentElement.style.setProperty('--hero-shift', `${shift}px`);
   }
+  updateSectionNavigation();
   scrollScheduled = false;
 }
 
-window.addEventListener('scroll', () => {
+function scheduleScrollEffects() {
   if (scrollScheduled) return;
   scrollScheduled = true;
   window.requestAnimationFrame(updateScrollEffects);
-}, { passive: true });
+}
+window.addEventListener('scroll', scheduleScrollEffects, { passive: true });
+window.addEventListener('resize', scheduleScrollEffects);
+window.addEventListener('pageshow', scheduleScrollEffects);
+window.addEventListener('load', scheduleScrollEffects);
+if ('ResizeObserver' in window) {
+  const layoutObserver = new ResizeObserver(scheduleScrollEffects);
+  pageSections.forEach((section) => layoutObserver.observe(section));
+}
 updateScrollEffects();
 
 function formatBytes(bytes) {
