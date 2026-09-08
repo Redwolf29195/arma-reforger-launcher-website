@@ -7,8 +7,8 @@ import { createLocalCounter } from '../lib/local-counter.mjs';
 import { downloadFromWebsite, downloadStats } from '../lib/download-counter.mjs';
 
 const release = JSON.parse(await readFile(new URL('../release.json', import.meta.url), 'utf8'));
-const request = (kind = 'setup', options = {}) => new Request(`https://armalaucher.com/get/${kind}`, options);
-const stats = async database => (await downloadStats(new Request('https://armalaucher.com/api/download-stats'), database)).json();
+const request = (kind = 'setup', options = {}) => new Request(`https://armalauncher.net/get/${kind}`, options);
+const stats = async database => (await downloadStats(new Request('https://armalauncher.net/api/download-stats'), database)).json();
 
 test('counts Setup and Portable requests atomically without losing concurrent downloads', async () => {
   const database = await createLocalCounter(':memory:');
@@ -41,9 +41,9 @@ test('a statistics failure does not break downloads and is never reported as a z
   const response = await downloadFromWebsite(request(), 'setup', { database:broken, loadRelease:async () => release });
   assert.equal(response.status, 302);
   assert.equal(response.headers.get('location'), release.downloads.setup.url);
-  const unavailable = await downloadStats(new Request('https://armalaucher.com/api/download-stats'), broken);
+  const unavailable = await downloadStats(new Request('https://armalauncher.net/api/download-stats'), broken);
   assert.equal(unavailable.status, 503); assert.equal('total' in await unavailable.json(), false);
-  assert.equal((await downloadStats(new Request('https://armalaucher.com/api/download-stats'), null)).status, 503);
+  assert.equal((await downloadStats(new Request('https://armalauncher.net/api/download-stats'), null)).status, 503);
 });
 
 test('unavailable releases and foreign URLs cannot count or redirect downloads', async () => {
