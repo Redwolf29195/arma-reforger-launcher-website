@@ -60,6 +60,7 @@ const staticRussian = {
   'ArmaLauncher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'ArmaLauncher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
   'Download for Windows': 'Скачать для Windows',
   'Download on GitHub': 'Скачать с GitHub',
+  'Source code · GPL-3.0': 'Исходный код · GPL-3.0',
   'Release information': 'Информация о версии',
   'Version': 'Версия',
   '01 / INTERFACE': '01 / ИНТЕРФЕЙС',
