@@ -3,28 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arma Reforger Launcher — import and launch mod presets</title>
-  <meta name="description" content="Import Arma Reforger JSON presets, check installed mods, and launch the selected set.">
+  <title>ArmaLauncher — Launcher for Arma Reforger</title>
+  <meta name="description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
   <meta name="theme-color" content="#111415">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Arma Reforger Launcher">
-  <meta property="og:description" content="Open a preset, check the mod list, and launch Arma Reforger with the selected set.">
-  <meta property="og:url" content="https://armaveblaucher.playit.plus/">
-  <meta property="og:image" content="https://armaveblaucher.playit.plus/assets/app-icon.png?v=4df786cd119f">
-  <meta property="og:image:width" content="1254">
-  <meta property="og:image:height" content="1254">
-  <link rel="canonical" href="https://armaveblaucher.playit.plus/">
-  <link rel="icon" href="/assets/app-icon.png?v=4df786cd119f" type="image/png">
-  <link rel="apple-touch-icon" href="/assets/app-icon.png?v=4df786cd119f">
-  <link rel="manifest" href="/site.webmanifest?v=5">
+  <meta property="og:title" content="ArmaLauncher — Launcher for Arma Reforger">
+  <meta property="og:description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
+  <meta property="og:site_name" content="ArmaLauncher">
+  <meta property="og:url" content="https://armalauncher.net/">
+  <meta property="og:image" content="https://armalauncher.net/assets/app-icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="ArmaLauncher logo">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ArmaLauncher — Launcher for Arma Reforger">
+  <meta name="twitter:description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
+  <meta name="twitter:image" content="https://armalauncher.net/assets/app-icon-512.png">
+  <meta name="twitter:image:alt" content="ArmaLauncher logo">
+  <link rel="canonical" href="https://armalauncher.net/">
+  <link rel="icon" href="/assets/app-icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/assets/app-icon-192.png">
+  <link rel="manifest" href="/site.webmanifest?v=6">
+  <link rel="preload" href="/assets/hero-field.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="/styles.css?v=7b7c2b8bead0">
   <script src="/app.js?v=6e8617e48d18" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://armalauncher.net/#website",
+        "name": "ArmaLauncher",
+        "alternateName": ["Arma Launcher", "Arma Reforger Launcher"],
+        "url": "https://armalauncher.net/"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://armalauncher.net/#application",
+        "name": "ArmaLauncher",
+        "url": "https://armalauncher.net/",
+        "description": "A community launcher for Arma Reforger with server browsing, JSON mod presets and installed mod checks.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Windows 10/11 x64",
+        "downloadUrl": "https://armalauncher.net/#download",
+        "image": "https://armalauncher.net/assets/app-icon-512.png"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <header class="site-header" id="siteHeader">
-    <a class="brand" href="#top" aria-label="Arma Reforger Launcher — home">
-      <img src="/assets/app-icon.png?v=4df786cd119f" alt="" width="42" height="42">
-      <span><b>ARMA REFORGER</b><small>LAUNCHER</small></span>
+    <a class="brand" href="#top" aria-label="ArmaLauncher — home">
+      <img src="/assets/app-icon-192.png" alt="" width="42" height="42">
+      <span><b>ArmaLauncher</b><small>FOR ARMA REFORGER</small></span>
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Main navigation">
@@ -40,10 +73,10 @@
         <button type="button" data-language="ru" aria-pressed="false">RU</button>
       </div>
       <a class="header-download" href="#download">
-        <img src="/assets/icons/download.svg" alt="">Download
+        <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
       </a>
       <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mainNav" title="Open menu">
-        <img src="/assets/icons/menu.svg" alt="">
+        <img src="/assets/icons/menu.svg" alt="" width="24" height="24">
       </button>
     </div>
   </header>
@@ -64,11 +97,12 @@
 
       <div class="container hero-content">
         <p class="eyebrow reveal">ARMALAUNCHER.NET / DESKTOP CLIENT</p>
-        <h1 class="reveal" data-reveal-delay="1">Arma Reforger<br>Launcher</h1>
-        <p class="hero-lead reveal" data-reveal-delay="2">Mod presets for Arma Reforger</p>
+        <h1>ArmaLauncher</h1>
+        <p class="hero-lead">A launcher for Arma Reforger</p>
+        <p class="hero-description">Browse servers, manage your mod presets and launch Arma Reforger with the right mod set.</p>
         <div class="hero-actions reveal" data-reveal-delay="3">
           <a class="button primary" data-download="setup" href="/get/setup">
-            <img src="/assets/icons/download.svg" alt="">
+            <img src="/assets/icons/download.svg" alt="" width="24" height="24">
             Download for Windows
           </a>
           <a class="button secondary" data-download="portable" href="/get/portable">
@@ -89,20 +123,21 @@
         <header class="section-header reveal">
           <p class="eyebrow">01 / INTERFACE</p>
           <h2>Launcher interface</h2>
+          <p>ArmaLauncher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.</p>
         </header>
 
         <figure class="launcher-figure launcher-gallery reveal" id="launcherGallery" aria-label="Launcher screenshot gallery" aria-roledescription="carousel">
           <div class="launcher-gallery-stage" tabindex="0">
-            <img id="launcherGalleryImage" src="/assets/launcher-workshop.png?v=3eda1f9eb8da" alt="Arma Reforger Launcher Workshop" width="1380" height="850">
+            <img id="launcherGalleryImage" src="/assets/launcher-workshop.webp" alt="ArmaLauncher Workshop showing available mods" width="1380" height="849" loading="lazy" decoding="async">
             <button class="gallery-arrow gallery-arrow-previous" id="galleryPrevious" type="button" title="Previous screenshot" aria-label="Previous screenshot">
-              <img src="/assets/icons/chevron-left.svg" alt="">
+              <img src="/assets/icons/chevron-left.svg" alt="" width="24" height="24">
             </button>
             <button class="gallery-arrow gallery-arrow-next" id="galleryNext" type="button" title="Next screenshot" aria-label="Next screenshot">
-              <img src="/assets/icons/chevron-right.svg" alt="">
+              <img src="/assets/icons/chevron-right.svg" alt="" width="24" height="24">
             </button>
           </div>
           <figcaption>
-            <span id="launcherGalleryCaption">ARMA REFORGER LAUNCHER / WORKSHOP</span>
+            <span id="launcherGalleryCaption">ArmaLauncher / WORKSHOP</span>
             <span id="launcherGalleryCounter">01 / 03</span>
           </figcaption>
         </figure>
@@ -124,19 +159,19 @@
         <div class="workflow-grid">
           <article class="workflow-step reveal">
             <span class="step-number">01</span>
-            <img src="/assets/icons/file-json-2.svg" alt="">
+            <img src="/assets/icons/file-json-2.svg" alt="" width="24" height="24">
             <h3>Add the preset</h3>
             <p>Open a JSON file or paste a list from <code>game.mods</code>.</p>
           </article>
           <article class="workflow-step reveal" data-reveal-delay="1">
             <span class="step-number">02</span>
-            <img src="/assets/icons/shield-check.svg" alt="">
+            <img src="/assets/icons/shield-check.svg" alt="" width="24" height="24">
             <h3>Check the mods</h3>
             <p>The launcher flags missing mods and version differences before launch.</p>
           </article>
           <article class="workflow-step reveal" data-reveal-delay="2">
             <span class="step-number">03</span>
-            <img src="/assets/icons/play.svg" alt="">
+            <img src="/assets/icons/play.svg" alt="" width="24" height="24">
             <h3>Launch Arma Reforger</h3>
             <p>Only mods from the selected preset are enabled for this launch.</p>
           </article>
@@ -154,19 +189,19 @@
 
         <div class="feature-list">
           <article class="feature-row reveal">
-            <img src="/assets/icons/layers-3.svg" alt="">
+            <img src="/assets/icons/layers-3.svg" alt="" width="24" height="24">
             <div><h3>Saved presets</h3><p>Keep separate mod lists for different servers and groups.</p></div>
           </article>
           <article class="feature-row reveal" data-reveal-delay="1">
-            <img src="/assets/icons/git-branch.svg" alt="">
+            <img src="/assets/icons/git-branch.svg" alt="" width="24" height="24">
             <div><h3>Dependencies</h3><p>Add known dependencies together with the selected mods.</p></div>
           </article>
           <article class="feature-row reveal" data-reveal-delay="2">
-            <img src="/assets/icons/folder-cog.svg" alt="">
+            <img src="/assets/icons/folder-cog.svg" alt="" width="24" height="24">
             <div><h3>Path detection</h3><p>Steam, Workshop, and profile folders are found automatically.</p></div>
           </article>
           <article class="feature-row reveal" data-reveal-delay="3">
-            <img src="/assets/icons/wrench.svg" alt="">
+            <img src="/assets/icons/wrench.svg" alt="" width="24" height="24">
             <div><h3>Repair tools</h3><p>Reset launcher data and scan the library again when needed.</p></div>
           </article>
         </div>
@@ -178,8 +213,8 @@
         <header class="download-heading reveal">
           <p class="eyebrow">04 / DOWNLOAD</p>
           <div class="download-heading-copy">
-            <h2>Installation options</h2>
-            <p>Choose the installer or the portable build for Windows 10/11 x64.</p>
+            <h2>Download ArmaLauncher</h2>
+            <p>Get ArmaLauncher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.</p>
           </div>
           <div class="download-counter" id="downloadCounter">
             <img src="/assets/icons/download.svg" alt="" width="22" height="22">
@@ -191,7 +226,7 @@
 
         <div class="release-list reveal">
           <article class="release-row" data-release-row="setup">
-            <div class="release-icon"><img src="/assets/icons/package-check.svg" alt=""></div>
+            <div class="release-icon"><img src="/assets/icons/package-check.svg" alt="" width="24" height="24"></div>
             <div class="release-name">
               <span>Standard installation</span>
               <h3>Windows installer</h3>
@@ -202,12 +237,12 @@
               <span>EXE / x64</span>
             </div>
             <a class="button dark" data-download="setup" href="/get/setup">
-              <img src="/assets/icons/download.svg" alt="">Download
+              <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
             </a>
           </article>
 
           <article class="release-row" data-release-row="portable">
-            <div class="release-icon"><img src="/assets/icons/usb.svg" alt=""></div>
+            <div class="release-icon"><img src="/assets/icons/usb.svg" alt="" width="24" height="24"></div>
             <div class="release-name">
               <span>No installation required</span>
               <h3>Portable</h3>
@@ -218,18 +253,18 @@
               <span>EXE / x64</span>
             </div>
             <a class="button outline-dark" data-download="portable" href="/get/portable">
-              <img src="/assets/icons/download.svg" alt="">Download
+              <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
             </a>
           </article>
         </div>
 
         <div class="release-verification reveal">
           <div>
-            <img src="/assets/icons/badge-check.svg" alt="">
+            <img src="/assets/icons/badge-check.svg" alt="" width="24" height="24">
             <span>Verify the installer with SHA-256</span>
           </div>
-          <button type="button" id="copySetupHash" data-copy-hash="B7BE750F7452DF32460AECCCBF6AE639DA5DF3069A3E0B57E56C74F7EF391EDD">
-            <img src="/assets/icons/copy.svg" alt="">Copy installer hash
+          <button type="button" id="copySetupHash" data-copy-hash="4C57097D766A5040D6175A82412C502DDE22D8F8163DDEBCDD361B02D8378ABA">
+            <img src="/assets/icons/copy.svg" alt="" width="24" height="24">Copy installer hash
           </button>
         </div>
         <p class="download-status" id="downloadStatus" role="status" aria-live="polite"></p>
@@ -240,8 +275,8 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <img src="/assets/app-icon.png?v=4df786cd119f" alt="" width="54" height="54">
-        <div><b>ARMA REFORGER LAUNCHER</b><span>Community project / v<span data-release-version>0.3.42</span></span></div>
+        <img src="/assets/app-icon-192.png" alt="" width="54" height="54" loading="lazy" decoding="async">
+        <div><b>ArmaLauncher</b><span>Community project / v<span data-release-version>0.3.42</span></span></div>
       </div>
       <div class="footer-links">
         <a href="#product">Interface</a>

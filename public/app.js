@@ -44,7 +44,7 @@ const dynamicText = {
 
 const staticRussian = {
   'Language': 'Язык',
-  'Arma Reforger Launcher — home': 'Arma Reforger Launcher — на главную',
+  'ArmaLauncher — home': 'ArmaLauncher — на главную',
   'Main navigation': 'Основная навигация',
   'Interface': 'Интерфейс',
   'How it works': 'Как работает',
@@ -55,7 +55,9 @@ const staticRussian = {
   'Home': 'Главная',
   'Presets': 'Пресеты',
   'Control': 'Контроль',
-  'Mod presets for Arma Reforger': 'Пресеты модов для Arma Reforger',
+  'A launcher for Arma Reforger': 'Лаунчер для Arma Reforger',
+  'Browse servers, manage your mod presets and launch Arma Reforger with the right mod set.': 'Выбирай серверы, управляй пресетами и запускай Arma Reforger с нужным набором модов.',
+  'ArmaLauncher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'ArmaLauncher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
   'Download for Windows': 'Скачать для Windows',
   'Release information': 'Информация о версии',
   'Version': 'Версия',
@@ -82,8 +84,8 @@ const staticRussian = {
   'Steam, Workshop, and profile folders are found automatically.': 'Папки Steam, Workshop и профиля определяются автоматически.',
   'Repair tools': 'Восстановление',
   'Reset launcher data and scan the library again when needed.': 'При необходимости можно сбросить данные лаунчера и проверить библиотеку заново.',
-  'Installation options': 'Способ установки',
-  'Choose the installer or the portable build for Windows 10/11 x64.': 'Выбери установщик или portable-версию для Windows 10/11 x64.',
+  'Download ArmaLauncher': 'Скачать ArmaLauncher',
+  'Get ArmaLauncher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.': 'Скачай ArmaLauncher для Arma Reforger на Windows 10/11 x64. Установщик создаст ярлыки и поможет выбрать папку, а portable-версия запускается из любого каталога. Затем открой JSON-пресет, проверь моды и запусти игру.',
   'Standard installation': 'Обычная установка',
   'Windows installer': 'Установщик Windows',
   'Creates shortcuts and lets you choose the installation folder.': 'Создаёт ярлыки и позволяет выбрать папку установки.',
@@ -100,19 +102,22 @@ let language = localStorage.getItem('armaLauncherSiteLanguage') === 'ru' ? 'ru' 
 
 const gallerySlides = [
   {
-    image: '/assets/launcher-workshop.png?v=3eda1f9eb8da',
+    image: '/assets/launcher-workshop.webp',
+    width: 1380, height: 849,
     title: { en: 'Workshop', ru: 'Мастерская' },
-    alt: { en: 'Arma Reforger Launcher Workshop', ru: 'Мастерская Arma Reforger Launcher' }
+    alt: { en: 'ArmaLauncher Workshop showing available mods', ru: 'Доступные моды в мастерской ArmaLauncher' }
   },
   {
-    image: '/assets/launcher-servers.png?v=60c054bebd7c',
+    image: '/assets/launcher-servers.webp',
+    width: 1378, height: 846,
     title: { en: 'Servers', ru: 'Серверы' },
-    alt: { en: 'Arma Reforger Launcher server browser', ru: 'Список серверов Arma Reforger Launcher' }
+    alt: { en: 'ArmaLauncher server browser', ru: 'Список серверов ArmaLauncher' }
   },
   {
-    image: '/assets/launcher-mods.png?v=e0e6485f9594',
+    image: '/assets/launcher-mods.webp',
+    width: 1379, height: 844,
     title: { en: 'Mods', ru: 'Моды' },
-    alt: { en: 'Arma Reforger Launcher mods', ru: 'Моды Arma Reforger Launcher' }
+    alt: { en: 'ArmaLauncher installed mod library', ru: 'Установленные моды в ArmaLauncher' }
   }
 ];
 let galleryIndex = 0;
@@ -158,14 +163,13 @@ function applyLanguage() {
 
   document.documentElement.lang = language;
   document.title = language === 'ru'
-    ? 'Arma Reforger Launcher — импорт и запуск пресетов модов'
-    : 'Arma Reforger Launcher — import and launch mod presets';
+    ? 'ArmaLauncher — лаунчер для Arma Reforger'
+    : 'ArmaLauncher — Launcher for Arma Reforger';
   $('meta[name="description"]').content = language === 'ru'
-    ? 'Импортируй JSON-пресеты Arma Reforger, проверяй установленные моды и запускай выбранный набор.'
-    : 'Import Arma Reforger JSON presets, check installed mods, and launch the selected set.';
-  $('meta[property="og:description"]').content = language === 'ru'
-    ? 'Открой пресет, проверь моды и запусти Arma Reforger с выбранным набором.'
-    : 'Open a preset, check the mod list, and launch Arma Reforger with the selected set.';
+    ? 'Скачай ArmaLauncher для Windows: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
+    : 'Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
+  for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) $(selector).content = document.title;
+  for (const selector of ['meta[property="og:description"]', 'meta[name="twitter:description"]']) $(selector).content = $('meta[name="description"]').content;
   $$('[data-language]').forEach((button) => {
     const active = button.dataset.language === language;
     button.classList.toggle('active', active);
@@ -205,9 +209,11 @@ function renderLauncherGallery() {
   if (!gallery) return;
   const slide = gallerySlides[galleryIndex];
   const image = $('#launcherGalleryImage');
+  image.width = slide.width;
+  image.height = slide.height;
   image.src = slide.image;
   image.alt = slide.alt[language];
-  $('#launcherGalleryCaption').textContent = `ARMA REFORGER LAUNCHER / ${slide.title[language].toUpperCase()}`;
+  $('#launcherGalleryCaption').textContent = `ArmaLauncher / ${slide.title[language].toUpperCase()}`;
   $('#launcherGalleryCounter').textContent = `${String(galleryIndex + 1).padStart(2, '0')} / ${String(gallerySlides.length).padStart(2, '0')}`;
 
   const previous = $('#galleryPrevious');
