@@ -1,6 +1,6 @@
-# Arma Reforger Launcher website
+# ArmaLauncher website
 
-Source for the ALGZ Arma Reforger Launcher download website published at
+Source for the ArmaLauncher download website published at
 `https://armalauncher.net` on Cloudflare Pages.
 
 The repository contains the website source and deployment helpers. Launcher
@@ -18,7 +18,9 @@ Connect this repository with the Pages Git integration. Use branch `main`,
 framework preset `None`, build command `npm run build`, and output directory
 `dist`. Set production `SITE_URL` to `https://armalauncher.net`.
 The project is `algz-arma-launcher`, with `algz-arma-launcher.pages.dev`
-as its fallback hostname. The build also supports `CF_PAGES_URL` as a fallback.
+as its infrastructure hostname. Canonical URLs always use the primary domain;
+`CF_PAGES_URL` cannot override them. An incorrect `SITE_URL` fails the build.
+Preview branches receive `X-Robots-Tag: noindex`; `main` remains indexable.
 
 The build copies only public website assets, generates release metadata and
 Pages redirects, and links installers directly to their versioned GitHub
@@ -59,7 +61,7 @@ generated `_routes.json`; static pages and the launcher updater stay separate.
 
 ## Local start
 
-Node.js 20 or newer is recommended. The release files are expected in the
+Use Node.js 22.13 or newer. The release files are expected in the
 parent `release` directory when this folder is placed beside the launcher
 release folder.
 
@@ -76,23 +78,43 @@ Validate the JavaScript files without starting the server:
 npm run check
 ```
 
-## Production
+## Production and domain migration
 
-The validated production topology is:
+Cloudflare Pages serves the static site at `https://armalauncher.net/`.
+Pages Functions and D1 handle website download counts; binaries and automatic
+updates remain in the existing GitHub Releases repository. There is no login
+or authentication service in this website repository.
 
-```text
-Internet -> Playit HTTPS tunnel -> Caddy :443 -> Node 127.0.0.1:4173
-                                      |
-                                      +-> /updates/* -> GitHub Releases
-```
+The only indexable page is `/`. Downloads are part of that page at `/#download`,
+so the sitemap deliberately contains only the homepage. The HTML includes one
+ArmaLauncher H1, canonical URL, description, Open Graph, Twitter card and
+WebSite/SoftwareApplication JSON-LD. All are available without JavaScript.
+The EN/RU switch keeps the brand and primary URL consistent.
 
-1. Keep the Node server on `127.0.0.1:4173`.
-2. Register `Register-ArmaLauncherWebsiteTask.ps1` once for automatic startup.
-3. Import the included `Caddyfile` from the ALGZ Caddy gateway.
-4. Keep update executables outside this repository.
-5. Update `release.json` after every launcher build.
-6. Keep the Playit agent online; update files are served by the separate
-   `arma-reforger-launcher-updates` GitHub repository.
+Configure domain redirects at Cloudflare, preserving the path and query:
+
+- Old zone `armalaucher.com`: Single Redirect, expression
+  `(http.host eq "armalaucher.com")`, dynamic target
+  `concat("https://armalauncher.net", http.request.uri.path)`, status `301`,
+  preserve query string enabled.
+- New zone: match `www.armalauncher.net` and redirect to the same target with
+  status `301`, preserving the query string. Enable HTTPS for the apex.
+- Pages infrastructure hostname: use a Bulk Redirect from
+  `algz-arma-launcher.pages.dev/` to `https://armalauncher.net/`, status `301`,
+  subpath matching, preserve path suffix and preserve query string enabled.
+  Leave include-subdomains off so temporary preview deployments stay available
+  for testing and carry their noindex header.
+
+Add `www.armalauncher.net` in Pages Custom domains before redirecting it, so
+Cloudflare provisions its DNS record and certificate. Retain the old domain,
+its DNS record, certificate and redirect for at least a year after migration.
+
+The legacy `armaveblaucher.playit.plus` hostname is controlled by the old PC's
+Caddy gateway. The included `Caddyfile` redirects website requests to the new
+site, while preserving its existing `/updates/*` GitHub route for older
+launchers. Apply it and reload Caddy on that gateway; changing this repository
+does not remotely reload the old PC. The Windows startup helpers and local
+loopback server remain available for development.
 
 Useful health checks:
 
@@ -102,9 +124,30 @@ GET /api/release
 GET /updates/latest.yml
 ```
 
-The Node server supports range requests for locally hosted files. The
-production Caddy route may proxy `/updates/*` to a separate update host, which
-must also support range requests for resumable downloads.
+The local Node server still supports range requests for locally hosted files.
+Run `npm run check`, `npm test`, and `npm run build` before publishing. Tests
+cover counter behavior, persistent counts, SEO in the built output, preview
+indexing, CSP hashes, download routing, metadata and real HTTP 404 responses.
+
+## Google Search Console
+
+1. Add a Domain property named `armalauncher.net` (without a scheme or path).
+2. Copy the TXT verification value that Google actually provides. In Cloudflare,
+   open this domain's DNS records, add type TXT, name `@`, that exact content,
+   and TTL Auto. Return to Google and verify. Keep the TXT record in DNS.
+3. In Sitemaps, submit `https://armalauncher.net/sitemap.xml`.
+4. Inspect `https://armalauncher.net/`, test the live URL, and request indexing.
+   `/#download` is a section of the same page, not a separate indexable URL.
+5. Check URL Inspection for indexing and Google's selected canonical. The Pages
+   indexing report and Search results report show coverage and search traffic.
+   A `site:armalauncher.net` search is only a quick secondary check.
+6. If the old domain was indexed, verify it in the same account and use its
+   Settings > Change of address tool after the redirects are working.
+
+Ownership tokens are provided by Google and stored in DNS, not invented or
+committed here. Indexing time, ranking and rich-result display are Google's
+decision; the SoftwareApplication markup intentionally omits unsupported
+ratings, reviews, price and organization claims.
 
 ## Security
 

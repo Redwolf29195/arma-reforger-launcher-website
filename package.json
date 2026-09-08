@@ -7,7 +7,7 @@
     "build": "node tools/build-pages.mjs",
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check public/app.js && node --check lib/download-counter.mjs && node --check lib/local-counter.mjs",
+    "check": "node --check server.mjs && node --check public/app.js && node --check lib/download-counter.mjs && node --check lib/local-counter.mjs && node --check lib/site-config.mjs && node --check tools/build-pages.mjs",
     "test": "node --test tests/*.test.mjs"
   }
 }

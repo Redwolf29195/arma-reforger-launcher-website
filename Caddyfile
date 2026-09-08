@@ -6,7 +6,7 @@ armaveblaucher.playit.plus {
 
 	@downloadPage path /updates /updates/
 	handle @downloadPage {
-		redir * /#download 302
+		redir * https://armalauncher.net/#download 301
 	}
 
 	handle_path /updates/* {
@@ -14,7 +14,6 @@ armaveblaucher.playit.plus {
 	}
 
 	handle {
-		encode zstd gzip
-		reverse_proxy 127.0.0.1:4173
+		redir https://armalauncher.net{uri} 301
 	}
 }
