@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, mkdtemp, cp, mkdir, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, cp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,11 +11,26 @@ import { createHash } from 'node:crypto';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (base, file) => readFile(path.join(base, file), 'utf8');
 
+// Exercise every supported route even before Linux assets reach release.json.
+const fixtureRelease = {
+  version: '9.8.7',
+  publishedAt: '2026-01-01T00:00:00Z',
+  platform: 'Windows 10/11 x64; Linux x64 (Ubuntu / Linux Mint)',
+  downloads: Object.fromEntries(Object.entries({
+    setup: 'x64-Setup.exe', portable: 'x64-Portable.exe',
+    deb: 'linux-x64.deb', appimage: 'linux-x64.AppImage'
+  }).map(([kind, suffix]) => {
+    const filename = `Arma-Reforger-Launcher-9.8.7-${suffix}`;
+    return [kind, { filename, bytes: 12345678, sha256: 'A'.repeat(64), available: true,
+      url: `https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v9.8.7/${filename}` }];
+  }))
+};
+
 test('production build has one canonical site, valid metadata and compatible downloads', async t => {
   const fixture = await mkdtemp(path.join(tmpdir(), 'armalauncher-seo-'));
   t.after(() => rm(fixture, { recursive: true, force: true }));
   for (const dir of ['tools', 'lib', 'public']) await cp(path.join(root, dir), path.join(fixture, dir), { recursive: true });
-  await cp(path.join(root, 'release.json'), path.join(fixture, 'release.json'));
+  await writeFile(path.join(fixture, 'release.json'), JSON.stringify(fixtureRelease));
   const env = { ...process.env, SITE_URL: '', CF_PAGES: '1', CF_PAGES_BRANCH: 'main', CF_PAGES_URL: 'https://test-build.pages.dev' };
   const build = (extra = {}) => execFileSync(process.execPath, ['tools/build-pages.mjs'], { cwd: fixture, env: { ...env, ...extra }, stdio: 'pipe' });
   build();
@@ -33,7 +48,7 @@ test('production build has one canonical site, valid metadata and compatible dow
   assert.equal(website.name, 'ArmaLauncher');
   assert.equal(website.url, 'https://armalauncher.net/');
   assert.deepEqual(website.alternateName, ['Arma Launcher', 'Arma Reforger Launcher']);
-  assert.equal(graph.find(item => item['@type'] === 'SoftwareApplication').operatingSystem, 'Windows 10/11 x64');
+  assert.equal(graph.find(item => item['@type'] === 'SoftwareApplication').operatingSystem, 'Windows 10/11 x64; Linux x64 (Ubuntu / Linux Mint)');
   assert.doesNotMatch(json, /aggregateRating|reviewCount|offers|price|datePublished/);
   const headers = await read(dist, '_headers');
   const digest = createHash('sha256').update(json.replace(/\r\n/g, '\n')).digest('base64');
@@ -65,8 +80,20 @@ test('production build has one canonical site, valid metadata and compatible dow
 });
 
 test('local HTTP serves indexable HTML, real 404s and safe download HEAD requests', async t => {
-  const child = spawn(process.execPath, ['server.mjs'], { cwd: root, env: { ...process.env, HOST: '127.0.0.1', PORT: '0', WEBSITE_COUNTER_PATH: ':memory:' }, stdio: ['ignore', 'pipe', 'pipe'] });
-  t.after(async () => { child.kill(); if (child.exitCode === null) await once(child, 'exit'); });
+  const fixture = await mkdtemp(path.join(tmpdir(), 'armalauncher-http-'));
+  let child;
+  t.after(async () => {
+    if (child && child.exitCode === null && child.signalCode === null) {
+      const exited = once(child, 'exit');
+      child.kill();
+      await exited;
+    }
+    await rm(fixture, { recursive: true, force: true });
+  });
+  for (const dir of ['lib', 'public', 'migrations']) await cp(path.join(root, dir), path.join(fixture, dir), { recursive: true });
+  await cp(path.join(root, 'server.mjs'), path.join(fixture, 'server.mjs'));
+  await writeFile(path.join(fixture, 'release.json'), JSON.stringify(fixtureRelease));
+  child = spawn(process.execPath, ['server.mjs'], { cwd: fixture, env: { ...process.env, HOST: '127.0.0.1', PORT: '0', WEBSITE_COUNTER_PATH: ':memory:' }, stdio: ['ignore', 'pipe', 'pipe'] });
   const address = await new Promise((resolve, reject) => {
     let output = '';
     child.stdout.on('data', data => { output += data; const match = output.match(/http:\/\/127\.0\.0\.1:(\d+)/); if (match) resolve(`http://127.0.0.1:${match[1]}`); });
@@ -83,23 +110,40 @@ test('local HTTP serves indexable HTML, real 404s and safe download HEAD request
     assert.equal(response.headers.get('x-robots-tag'), 'noindex');
     assert.match(await response.text(), /Page not found/);
   }
-  assert.equal((await fetch(address + '/api/release')).status, 200);
+  const releaseResponse = await fetch(address + '/api/release');
+  assert.equal(releaseResponse.status, 200);
+  assert.deepEqual(await releaseResponse.json(), fixtureRelease);
   const unknownStoreInstaller = await fetch(address + '/store/0.0.0/missing.exe');
   assert.equal(unknownStoreInstaller.status, 404);
   assert.equal(unknownStoreInstaller.headers.get('location'), null);
-  for (const kind of ['setup', 'portable']) {
+  for (const kind of Object.keys(fixtureRelease.downloads)) {
     const response = await fetch(`${address}/get/${kind}`, { method: 'HEAD', redirect: 'manual' });
     assert.equal(response.status, 302);
-    assert.match(response.headers.get('location'), /^https:\/\/github.com\/Redwolf29195\/arma-reforger-launcher-updates\/releases\/download\//);
+    assert.equal(response.headers.get('location'), fixtureRelease.downloads[kind].url);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.equal(response.headers.get('set-cookie'), null);
+    assert.equal(await response.text(), '');
   }
   const initialStats = await fetch(address + '/api/download-stats');
   assert.equal((await initialStats.json()).total, 0);
   const cookie = initialStats.headers.get('set-cookie').split(';')[0];
   assert.match(cookie, /^arma_download=/);
-  for (const kind of ['setup', 'portable', 'setup']) {
+  for (const kind of Object.keys(fixtureRelease.downloads)) {
+    const prefetch = await fetch(`${address}/get/${kind}`, { headers: { Cookie: cookie, Purpose: 'prefetch' }, redirect: 'manual' });
+    assert.equal(prefetch.status, 302);
+    assert.equal(prefetch.headers.get('location'), fixtureRelease.downloads[kind].url);
+    assert.equal(prefetch.headers.get('set-cookie'), null);
+  }
+  assert.equal((await (await fetch(address + '/api/download-stats')).json()).total, 0);
+  for (const kind of ['appimage', 'deb', 'setup', 'portable', 'appimage']) {
     const response = await fetch(`${address}/get/${kind}`, { headers: { Cookie: cookie }, redirect:'manual' });
     assert.equal(response.status, 302);
-    assert.match(response.headers.get('location'), /^https:\/\/github.com\//);
+    assert.equal(response.headers.get('location'), fixtureRelease.downloads[kind].url);
   }
-  assert.equal((await (await fetch(address + '/api/download-stats')).json()).total, 1);
+  const repeatedStats = await fetch(address + '/api/download-stats');
+  assert.deepEqual(await repeatedStats.json(), { total:1, setup:0, portable:1, source:'website', excludesUpdates:true });
+  const secondCookie = repeatedStats.headers.get('set-cookie').split(';')[0];
+  const installer = await fetch(`${address}/get/deb`, { headers: { Cookie: secondCookie }, redirect: 'manual' });
+  assert.equal(installer.status, 302);
+  assert.deepEqual(await (await fetch(address + '/api/download-stats')).json(), { total:2, setup:1, portable:1, source:'website', excludesUpdates:true });
 });

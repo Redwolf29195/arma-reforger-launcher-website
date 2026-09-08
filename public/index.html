@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ArmaLauncher — Launcher for Arma Reforger</title>
-  <meta name="description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
+  <meta name="description" content="Download ArmaLauncher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
   <meta name="theme-color" content="#111415">
   <meta property="og:type" content="website">
   <meta property="og:title" content="ArmaLauncher — Launcher for Arma Reforger">
-  <meta property="og:description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
+  <meta property="og:description" content="Download ArmaLauncher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
   <meta property="og:site_name" content="ArmaLauncher">
   <meta property="og:url" content="https://armalauncher.net/">
   <meta property="og:image" content="https://armalauncher.net/assets/app-icon-512.png">
@@ -17,7 +17,7 @@
   <meta property="og:image:alt" content="ArmaLauncher logo">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="ArmaLauncher — Launcher for Arma Reforger">
-  <meta name="twitter:description" content="Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
+  <meta name="twitter:description" content="Download ArmaLauncher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.">
   <meta name="twitter:image" content="https://armalauncher.net/assets/app-icon-512.png">
   <meta name="twitter:image:alt" content="ArmaLauncher logo">
   <link rel="canonical" href="https://armalauncher.net/">
@@ -45,7 +45,7 @@
         "url": "https://armalauncher.net/",
         "description": "A community launcher for Arma Reforger with server browsing, JSON mod presets and installed mod checks.",
         "applicationCategory": "GameApplication",
-        "operatingSystem": "Windows 10/11 x64",
+        "operatingSystem": "Windows 10/11 x64; Linux x64 (Ubuntu / Linux Mint)",
         "downloadUrl": "https://armalauncher.net/#download",
         "image": "https://armalauncher.net/assets/app-icon-512.png"
       }
@@ -105,8 +105,8 @@
             <img src="/assets/icons/download.svg" alt="" width="24" height="24">
             Download for Windows
           </a>
-          <a class="button secondary" data-download="portable" href="/get/portable">
-            Portable
+          <a class="button secondary" data-download="deb" href="/get/deb">
+            Download for Linux
           </a>
           <a class="button secondary" href="https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/latest" target="_blank" rel="noopener noreferrer">
             Download on GitHub
@@ -114,7 +114,7 @@
         </div>
         <div class="hero-meta reveal" data-reveal-delay="4" aria-label="Release information">
           <span>Version <b data-release-version>0.3.43</b></span>
-          <span>Windows 10/11 x64</span>
+          <span>Windows / Linux · x64</span>
           <span><b data-release-size="setup">81.8 MB</b></span>
         </div>
       </div>
@@ -217,7 +217,7 @@
           <p class="eyebrow">04 / DOWNLOAD</p>
           <div class="download-heading-copy">
             <h2>Download ArmaLauncher</h2>
-            <p>Get ArmaLauncher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.</p>
+            <p>Choose your system. Windows has an installer and a portable version. For Ubuntu and Linux Mint, use the DEB package or AppImage. Arma Reforger on Linux requires Steam and Proton.</p>
           </div>
           <div class="download-counter" id="downloadCounter">
             <img src="/assets/icons/download.svg" alt="" width="22" height="22">
@@ -228,6 +228,7 @@
         </header>
 
         <div class="release-list reveal">
+          <h3 class="release-platform">Windows 10 / 11 · x64</h3>
           <article class="release-row" data-release-row="setup">
             <div class="release-icon"><img src="/assets/icons/package-check.svg" alt="" width="24" height="24"></div>
             <div class="release-name">
@@ -259,7 +260,33 @@
               <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
             </a>
           </article>
+          <h3 class="release-platform">Linux · Ubuntu / Linux Mint · x64</h3>
+          <article class="release-row" data-release-row="deb">
+            <div class="release-icon"><img src="/assets/icons/package-check.svg" alt="" width="24" height="24"></div>
+            <div class="release-name">
+              <span>Recommended for Ubuntu and Linux Mint</span>
+              <h3>Linux installer</h3>
+              <p>Installs the launcher and adds it to your applications menu.</p>
+            </div>
+            <div class="release-info"><span data-release-size="deb">—</span><span>DEB / x64</span></div>
+            <a class="button dark" data-download="deb" href="/get/deb">
+              <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
+            </a>
+          </article>
+          <article class="release-row" data-release-row="appimage">
+            <div class="release-icon"><img src="/assets/icons/usb.svg" alt="" width="24" height="24"></div>
+            <div class="release-name">
+              <span>Portable Linux version</span>
+              <h3>AppImage</h3>
+              <p>Make the file executable to run it. Requires FUSE 2.</p>
+            </div>
+            <div class="release-info"><span data-release-size="appimage">—</span><span>AppImage / x64</span></div>
+            <a class="button outline-dark" data-download="appimage" href="/get/appimage">
+              <img src="/assets/icons/download.svg" alt="" width="24" height="24">Download
+            </a>
+          </article>
         </div>
+        <p class="linux-note">Linux: first launch the game once through Steam with Proton. Launcher updates are installed manually.</p>
 
         <div class="download-alternative reveal">
           <a class="button outline-dark" href="https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/latest" target="_blank" rel="noopener noreferrer">
@@ -273,10 +300,10 @@
         <div class="release-verification reveal">
           <div>
             <img src="/assets/icons/badge-check.svg" alt="" width="24" height="24">
-            <span>Verify the installer with SHA-256</span>
+            <span>Verify the Windows installer with SHA-256</span>
           </div>
           <button type="button" id="copySetupHash" data-copy-hash="BC3CD717F4BC65382D34A6DE7AD91F87058610C8FC65C1F3D9FDA65AB67BD81B">
-            <img src="/assets/icons/copy.svg" alt="" width="24" height="24">Copy installer hash
+            <img src="/assets/icons/copy.svg" alt="" width="24" height="24">Copy Windows installer hash
           </button>
         </div>
         <p class="download-status" id="downloadStatus" role="status" aria-live="polite"></p>

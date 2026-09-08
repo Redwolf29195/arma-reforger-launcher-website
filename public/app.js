@@ -59,6 +59,16 @@ const staticRussian = {
   'Browse servers, manage your mod presets and launch Arma Reforger with the right mod set.': 'Выбирай серверы, управляй пресетами и запускай Arma Reforger с нужным набором модов.',
   'ArmaLauncher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'ArmaLauncher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
   'Download for Windows': 'Скачать для Windows',
+  'Download for Linux': 'Скачать для Linux',
+  'Choose your system. Windows has an installer and a portable version. For Ubuntu and Linux Mint, use the DEB package or AppImage. Arma Reforger on Linux requires Steam and Proton.': 'Выбери свою систему. Для Windows есть установщик и portable-версия. Для Ubuntu и Linux Mint — DEB-пакет и AppImage. Для Arma Reforger на Linux нужны Steam и Proton.',
+  'Recommended for Ubuntu and Linux Mint': 'Рекомендуется для Ubuntu и Linux Mint',
+  'Linux installer': 'Установщик Linux',
+  'Installs the launcher and adds it to your applications menu.': 'Устанавливает лаунчер и добавляет его в меню приложений.',
+  'Portable Linux version': 'Переносная версия для Linux',
+  'Make the file executable to run it. Requires FUSE 2.': 'Разреши выполнение файла, чтобы запустить его. Требуется FUSE 2.',
+  'Linux: first launch the game once through Steam with Proton. Launcher updates are installed manually.': 'Linux: сначала один раз запусти игру через Steam с Proton. Обновления лаунчера устанавливаются вручную.',
+  'Verify the Windows installer with SHA-256': 'Проверка установщика Windows по SHA-256',
+  'Copy Windows installer hash': 'Копировать хэш установщика Windows',
   'Download on GitHub': 'Скачать с GitHub',
   'Source code · GPL-3.0': 'Исходный код · GPL-3.0',
   'Release information': 'Информация о версии',
@@ -168,8 +178,8 @@ function applyLanguage() {
     ? 'ArmaLauncher — лаунчер для Arma Reforger'
     : 'ArmaLauncher — Launcher for Arma Reforger';
   $('meta[name="description"]').content = language === 'ru'
-    ? 'Скачай ArmaLauncher для Windows: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
-    : 'Download ArmaLauncher for Windows. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
+    ? 'Скачай ArmaLauncher для Windows и Linux: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
+    : 'Download ArmaLauncher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
   for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) $(selector).content = document.title;
   for (const selector of ['meta[property="og:description"]', 'meta[name="twitter:description"]']) $(selector).content = $('meta[name="description"]').content;
   $$('[data-language]').forEach((button) => {
@@ -187,8 +197,9 @@ function setLanguage(nextLanguage) {
   applyLanguage();
   renderDownloadCount();
   if (currentRelease) {
-    setDownloadAvailability('setup', currentRelease.downloads.setup);
-    setDownloadAvailability('portable', currentRelease.downloads.portable);
+    for (const kind of ['setup', 'portable', 'deb', 'appimage']) {
+      setDownloadAvailability(kind, currentRelease.downloads?.[kind]);
+    }
   }
 }
 
@@ -290,6 +301,7 @@ function updateSectionNavigation() {
     && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
     currentSection = pageSections[pageSections.length - 1];
   }
+  $('.scroll-rail')?.classList.toggle('on-download', currentSection.id === 'download');
   sectionLinks.forEach((link, id) => {
     const active = id === currentSection.id;
     link.classList.toggle('active', active);
@@ -326,22 +338,24 @@ if ('ResizeObserver' in window) {
 updateScrollEffects();
 
 function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '—';
   const locale = language === 'ru' ? 'ru-RU' : 'en-US';
   const unit = language === 'ru' ? 'МБ' : 'MB';
   return `${(bytes / 1024 / 1024).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ${unit}`;
 }
 
 function setDownloadAvailability(type, download) {
+  const available = download?.available === true;
   $$(`[data-download="${type}"]`).forEach((link) => {
     link.href = `/get/${type}`;
-    link.classList.toggle('is-disabled', !download.available);
-    link.setAttribute('aria-disabled', String(!download.available));
+    link.classList.toggle('is-disabled', !available);
+    link.setAttribute('aria-disabled', String(!available));
   });
   $$(`[data-release-size="${type}"]`).forEach((element) => {
-    element.textContent = formatBytes(download.bytes);
+    element.textContent = formatBytes(download?.bytes || 0);
   });
   const releaseRow = $(`[data-release-row="${type}"]`);
-  if (releaseRow) releaseRow.dataset.available = String(download.available);
+  if (releaseRow) releaseRow.dataset.available = String(available);
 }
 
 async function loadRelease() {
@@ -353,8 +367,9 @@ async function loadRelease() {
     $$('[data-release-version]').forEach((element) => {
       element.textContent = release.version;
     });
-    setDownloadAvailability('setup', release.downloads.setup);
-    setDownloadAvailability('portable', release.downloads.portable);
+    for (const kind of ['setup', 'portable', 'deb', 'appimage']) {
+      setDownloadAvailability(kind, release.downloads?.[kind]);
+    }
     $('#copySetupHash').dataset.copyHash = release.downloads.setup.sha256 || '';
   } catch {
     $('#downloadStatus').textContent = text('releaseError');
@@ -388,7 +403,7 @@ $$('[data-download]').forEach((link) => {
       $('#downloadStatus').textContent = text('unavailable');
       return;
     }
-    const label = link.dataset.download === 'setup' ? 'Windows Setup' : 'Portable';
+    const label = { setup: 'Windows Setup', portable: 'Windows Portable', deb: 'Linux DEB', appimage: 'Linux AppImage' }[link.dataset.download];
     $('#downloadStatus').textContent = text('downloadStarted', { label });
   });
 });

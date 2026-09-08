@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { createLocalCounter } from '../lib/local-counter.mjs';
 import { downloadFromWebsite, downloadStats } from '../lib/download-counter.mjs';
 
-const release = JSON.parse(await readFile(new URL('../release.json', import.meta.url), 'utf8'));
+// Counter behavior must not depend on which platforms are publicly released yet.
+const formats = {
+  setup: 'x64-Setup.exe', portable: 'x64-Portable.exe',
+  deb: 'linux-x64.deb', appimage: 'linux-x64.AppImage'
+};
+const release = {
+  version: '9.8.7',
+  downloads: Object.fromEntries(Object.entries(formats).map(([kind, suffix]) => {
+    const filename = `Arma-Reforger-Launcher-9.8.7-${suffix}`;
+    return [kind, { filename, available: true,
+      url: `https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v9.8.7/${filename}` }];
+  }))
+};
+const kinds = Object.keys(formats);
 const browserCookie = () => `__Host-arma_download=${crypto.randomUUID()}`;
 const cookieFrom = response => response.headers.get('set-cookie')?.split(';')[0];
 const request = (kind = 'setup', options = {}) => {
@@ -16,16 +29,17 @@ const request = (kind = 'setup', options = {}) => {
 };
 const stats = async database => (await downloadStats(new Request('https://armalauncher.net/api/download-stats'), database)).json();
 
-test('counts different browsers atomically without losing concurrent downloads', async () => {
+test('counts all four formats from different browsers atomically in the historical buckets', async () => {
   const database = await createLocalCounter(':memory:');
   try {
     assert.equal((await stats(database)).total, 0);
     const results = await Promise.all(Array.from({ length: 120 }, (_, index) => {
-      const kind = index % 3 ? 'setup' : 'portable';
+      const kind = kinds[index % kinds.length];
       return downloadFromWebsite(request(kind), kind, { database, loadRelease: async () => release });
     }));
     assert(results.every(result => result.status === 302 && result.headers.get('cache-control') === 'no-store'));
-    assert.deepEqual(await stats(database), { total:120, setup:80, portable:40, source:'website', excludesUpdates:true });
+    results.forEach((result, index) => assert.equal(result.headers.get('location'), release.downloads[kinds[index % kinds.length]].url));
+    assert.deepEqual(await stats(database), { total:120, setup:60, portable:60, source:'website', excludesUpdates:true });
   } finally { database.close(); }
 });
 
@@ -40,7 +54,7 @@ test('simultaneous first requests from one identified browser increment once', a
   } finally { database.close(); }
 });
 
-test('repeat downloads share one count across concurrent clicks, formats and releases', async () => {
+test('repeat downloads share one count across concurrent clicks, Windows, Linux and releases', async () => {
   const database = await createLocalCounter(':memory:');
   const headers = { Cookie: browserCookie() };
   try {
@@ -52,12 +66,40 @@ test('repeat downloads share one count across concurrent clicks, formats and rel
       download.url = download.url.replaceAll(release.version, newer.version);
     }
     const results = await Promise.all(Array.from({ length: 80 }, (_, index) => {
-      const kind = index % 2 ? 'setup' : 'portable';
+      const kind = kinds[index % kinds.length];
       return downloadFromWebsite(request(kind, { headers }), kind, { database, loadRelease: async () => index % 3 ? release : newer });
     }));
     assert(results.every(response => response.status === 302));
     assert.deepEqual(await stats(database), { total:1, setup:1, portable:0, source:'website', excludesUpdates:true });
     assert.equal((await database.prepare('SELECT COUNT(*) AS total FROM download_visitors').first()).total, 1);
+  } finally { database.close(); }
+});
+
+test('a Linux-first browser stays deduplicated when it later downloads either operating system', async () => {
+  const database = await createLocalCounter(':memory:');
+  const headers = { Cookie: browserCookie() };
+  try {
+    const first = await downloadFromWebsite(request('appimage', { headers }), 'appimage', { database, loadRelease: async () => release });
+    assert.equal(first.headers.get('location'), release.downloads.appimage.url);
+    for (const kind of kinds) {
+      assert.equal((await downloadFromWebsite(request(kind, { headers }), kind, { database, loadRelease: async () => release })).status, 302);
+    }
+    assert.deepEqual(await stats(database), { total:1, setup:0, portable:1, source:'website', excludesUpdates:true });
+    assert.equal((await database.prepare('SELECT COUNT(*) AS total FROM download_visitors').first()).total, 1);
+  } finally { database.close(); }
+});
+
+test('deb and AppImage increment existing installer and portable totals without new database kinds', async () => {
+  const database = await createLocalCounter(':memory:');
+  try {
+    await database.prepare("UPDATE download_counts SET total = CASE kind WHEN 'setup' THEN 14 ELSE 13 END").run();
+    for (const kind of ['deb', 'appimage']) {
+      const response = await downloadFromWebsite(request(kind), kind, { database, loadRelease: async () => release });
+      assert.equal(response.status, 302);
+      assert.equal(response.headers.get('location'), release.downloads[kind].url);
+    }
+    assert.deepEqual(await stats(database), { total:29, setup:15, portable:14, source:'website', excludesUpdates:true });
+    assert.equal((await database.prepare("SELECT COUNT(*) AS total FROM download_counts WHERE kind NOT IN ('setup', 'portable')").first()).total, 0);
   } finally { database.close(); }
 });
 
@@ -105,11 +147,15 @@ test('direct links confirm a cookie once and never loop if cookies are blocked',
 test('HEAD, prefetch, invalid kinds and stats reads never increase the counter', async () => {
   const database = await createLocalCounter(':memory:');
   try {
-    for (const options of [{ method:'HEAD' },{ headers:{Purpose:'prefetch'} },{ headers:{'Sec-Purpose':'prefetch;prerender'} }]) {
-      const response = await downloadFromWebsite(request('setup', options), 'setup', { database, loadRelease:async () => release });
-      assert.equal(response.status, 302);
-      assert.equal(response.headers.get('set-cookie'), null);
-      assert.equal(response.headers.get('location'), release.downloads.setup.url);
+    for (const kind of kinds) {
+      for (const options of [{ method:'HEAD' },{ headers:{Purpose:'prefetch'} },{ headers:{'Sec-Purpose':'prefetch;prerender'} }]) {
+        const response = await downloadFromWebsite(request(kind, options), kind, { database, loadRelease:async () => release });
+        assert.equal(response.status, 302);
+        assert.equal(response.headers.get('set-cookie'), null);
+        assert.equal(response.headers.get('location'), release.downloads[kind].url);
+        assert.equal(await response.text(), '');
+      }
+      assert.equal((await downloadFromWebsite(request(kind, {method:'POST'}), kind, { database, loadRelease:async () => release })).status, 405);
     }
     assert.equal((await downloadFromWebsite(request('invalid'), 'invalid', { database, loadRelease:async () => release })).status, 404);
     assert.equal((await downloadFromWebsite(request('setup', {method:'POST'}), 'setup', { database, loadRelease:async () => release })).status, 405);
@@ -128,13 +174,26 @@ test('a statistics failure does not break downloads and is never reported as a z
   assert.equal((await downloadStats(new Request('https://armalauncher.net/api/download-stats'), null)).status, 503);
 });
 
-test('unavailable releases and foreign URLs cannot count or redirect downloads', async () => {
+test('unavailable releases, wrong OS formats and foreign URLs cannot count or redirect any download', async () => {
   const database = await createLocalCounter(':memory:');
   try {
-    for (const mutation of [{ available:false },{ url:'https://example.com/other.exe' },{ filename:'other.exe' }]) {
-      const invalid = structuredClone(release);
-      Object.assign(invalid.downloads.setup, mutation);
-      assert.equal((await downloadFromWebsite(request(), 'setup', { database, loadRelease:async () => invalid })).status, 503);
+    for (const kind of kinds) {
+      for (const mutation of [
+        { available:false }, { available:'true' }, { url:'https://example.com/other.exe' },
+        { filename:'other.exe' }, { filename:release.downloads[kind === 'setup' ? 'deb' : 'setup'].filename },
+        { url:release.downloads[kind].url.replace('/v9.8.7/', '/v9.8.6/') },
+        { url:`${release.downloads[kind].url}?redirect=elsewhere` }
+      ]) {
+        const invalid = structuredClone(release);
+        Object.assign(invalid.downloads[kind], mutation);
+        const response = await downloadFromWebsite(request(kind), kind, { database, loadRelease:async () => invalid });
+        assert.equal(response.status, 503);
+        assert.equal(response.headers.get('location'), null);
+        assert.equal(response.headers.get('set-cookie'), null);
+      }
+      const missing = structuredClone(release);
+      delete missing.downloads[kind];
+      assert.equal((await downloadFromWebsite(request(kind), kind, { database, loadRelease:async () => missing })).status, 503);
     }
     assert.equal((await stats(database)).total, 0);
   } finally { database.close(); }
@@ -147,10 +206,11 @@ test('historical totals and browser deduplication survive restarts and migration
   const headers = { Cookie: browserCookie() };
   try {
     await database.prepare("UPDATE download_counts SET total = CASE kind WHEN 'setup' THEN 14 ELSE 13 END").run();
-    await downloadFromWebsite(request('setup', { headers }), 'setup', { database, loadRelease:async () => release });
+    await downloadFromWebsite(request('deb', { headers }), 'deb', { database, loadRelease:async () => release });
     database.close();
     database = await createLocalCounter(filename);
-    await downloadFromWebsite(request('portable', { headers }), 'portable', { database, loadRelease:async () => release });
+    await downloadFromWebsite(request('appimage', { headers }), 'appimage', { database, loadRelease:async () => release });
+    await downloadFromWebsite(request('setup', { headers }), 'setup', { database, loadRelease:async () => release });
     assert.deepEqual(await stats(database), { total:28, setup:15, portable:13, source:'website', excludesUpdates:true });
   } finally { database.close(); await rm(directory, { recursive:true, force:true }); }
 });

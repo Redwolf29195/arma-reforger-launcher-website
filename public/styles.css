@@ -254,6 +254,15 @@ a {
   transform: scale(1.16);
 }
 
+.scroll-rail.on-download a {
+  border-color: rgba(11, 13, 14, 0.62);
+}
+
+.scroll-rail.on-download a.active {
+  background: var(--black);
+  border-color: var(--black);
+}
+
 .scroll-rail a span {
   position: absolute;
   right: 24px;
@@ -869,6 +878,21 @@ code {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
+}
+
+.release-platform {
+  margin: 0;
+  padding: 22px 0 12px;
+  font-size: 16px;
+  font-weight: 800;
+  border-bottom: 1px solid rgb(15 20 19 / 25%);
+}
+
+.linux-note {
+  max-width: 780px;
+  margin: 16px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .release-verification {
