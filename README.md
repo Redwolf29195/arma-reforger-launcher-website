@@ -1,5 +1,7 @@
 # ArmaLauncher website
 
+<img src="public/assets/app-icon-512.png" width="128" height="128" alt="LAR Launcher logo">
+
 Source for the ArmaLauncher download website published at
 `https://armalauncher.net` on Cloudflare Pages.
 
@@ -32,8 +34,9 @@ this repository. Cloudflare rebuilds the site from that metadata.
 
 ## Website download counter
 
-The counter records the first download per browser through `/get/setup` or
-`/get/portable`. Both formats and future releases share the same browser ID.
+The counter records the first download per browser through `/get/setup`,
+`/get/portable`, `/get/deb` or `/get/appimage`. All four formats and future
+releases share the same browser ID.
 Automatic launcher updates and the existing `/updates/*` links go directly to
 GitHub and do not increment it. HEAD requests and browser prefetches are also
 excluded. It counts browser download attempts, not completed installations or
@@ -68,7 +71,9 @@ automatic updates.
 
 `GET /api/download-stats` retains the total and Setup/Portable response fields.
 New downloads are attributed only to the first format requested by a browser,
-so Setup plus Portable still equals the overall total.
+with DEB included in the existing Setup total and AppImage in Portable. The
+two response fields therefore still sum to the overall total, without resetting
+historical counts or changing the database schema.
 The page refreshes it once a minute while visible. A counter failure does not
 block downloads, and unavailable statistics are never presented as zero.
 The database persists across launcher releases and website deployments.

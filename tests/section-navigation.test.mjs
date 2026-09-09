@@ -23,17 +23,24 @@ function navigationFixture({ y = 0, height = 768, reducedMotion = false } = {}) 
     requestAnimationFrame(callback) { frames.push(callback); }
   };
   const sections = ids.map((id, index) => ({ id, getBoundingClientRect() { return { top: offsets[index] - window.scrollY }; } }));
+  const rail = { onDownload: false, classList: { toggle(name, active) {
+    assert.equal(name, 'on-download');
+    rail.onDownload = active;
+  } } };
   vm.runInNewContext(navigationCode, {
     window,
     document: { documentElement: { scrollHeight: 4550, style: { setProperty() {} } } },
     header: { classList: { toggle() {} }, getBoundingClientRect() { return { bottom: window.scrollY > 24 ? 66 : 76 }; } },
     reducedMotion: { matches: reducedMotion },
+    $: selector => selector === '.scroll-rail' ? rail : undefined,
     $$: selector => selector === '[data-section-link]' ? links : sections
   });
   const active = () => {
     assert.equal(links.filter(link => link.active).length, 1);
     assert.equal(links.filter(link => link.attributes['aria-current'] === 'location').length, 1);
-    return links.find(link => link.active).dataset.sectionLink;
+    const currentSection = links.find(link => link.active).dataset.sectionLink;
+    assert.equal(rail.onDownload, currentSection === 'download');
+    return currentSection;
   };
   const flush = () => { const pending = frames; frames = []; pending.forEach(callback => callback()); };
   return { window, offsets, active, flush, dispatch: name => listeners.get(name)?.(), queued: () => frames.length };
