@@ -114,19 +114,19 @@ let language = localStorage.getItem('armaLauncherSiteLanguage') === 'ru' ? 'ru' 
 
 const gallerySlides = [
   {
-    image: '/assets/launcher-workshop.webp?v=logo20260909',
+    image: '/assets/launcher-workshop.webp?v=classic20260909v47',
     width: 1380, height: 850,
     title: { en: 'Workshop', ru: 'Мастерская' },
     alt: { en: 'ArmaLauncher Workshop showing available mods', ru: 'Доступные моды в мастерской ArmaLauncher' }
   },
   {
-    image: '/assets/launcher-servers.webp?v=logo20260909',
+    image: '/assets/launcher-servers.webp?v=classic20260909v47',
     width: 1380, height: 850,
     title: { en: 'Servers', ru: 'Серверы' },
     alt: { en: 'ArmaLauncher server browser', ru: 'Список серверов ArmaLauncher' }
   },
   {
-    image: '/assets/launcher-mods.webp?v=logo20260909',
+    image: '/assets/launcher-mods.webp?v=classic20260909v47',
     width: 1380, height: 850,
     title: { en: 'Mods', ru: 'Моды' },
     alt: { en: 'ArmaLauncher installed mod library', ru: 'Установленные моды в ArmaLauncher' }

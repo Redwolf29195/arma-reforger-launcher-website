@@ -97,8 +97,8 @@ a {
 
 .brand img,
 .footer-brand > img {
-  object-fit: contain;
-  border: 1px solid rgba(255, 123, 30, 0.62);
+  object-fit: cover;
+  border: 1px solid rgba(227, 164, 56, 0.62);
 }
 
 .brand span {

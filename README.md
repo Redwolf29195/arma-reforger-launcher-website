@@ -1,6 +1,6 @@
 # ArmaLauncher website
 
-<img src="public/assets/app-icon-512.png" width="128" height="128" alt="LAR Launcher logo">
+<img src="public/assets/app-icon-512.png" width="128" height="128" alt="Arma Reforger Launcher logo">
 
 Source for the ArmaLauncher download website published at
 `https://armalauncher.net` on Cloudflare Pages.
