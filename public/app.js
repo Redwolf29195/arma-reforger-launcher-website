@@ -44,7 +44,7 @@ const dynamicText = {
 
 const staticRussian = {
   'Language': 'Язык',
-  'ArmaLauncher — home': 'ArmaLauncher — на главную',
+  'LAR Launcher — home': 'LAR Launcher — на главную',
   'Main navigation': 'Основная навигация',
   'Interface': 'Интерфейс',
   'How it works': 'Как работает',
@@ -57,7 +57,7 @@ const staticRussian = {
   'Control': 'Контроль',
   'A launcher for Arma Reforger': 'Лаунчер для Arma Reforger',
   'Browse servers, manage your mod presets and launch Arma Reforger with the right mod set.': 'Выбирай серверы, управляй пресетами и запускай Arma Reforger с нужным набором модов.',
-  'ArmaLauncher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'ArmaLauncher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
+  'LAR Launcher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'LAR Launcher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
   'Download for Windows': 'Скачать для Windows',
   'Download for Linux': 'Скачать для Linux',
   'Choose your system. Windows has an installer and a portable version. For Ubuntu and Linux Mint, use the DEB package or AppImage. Arma Reforger on Linux requires Steam and Proton.': 'Выбери свою систему. Для Windows есть установщик и portable-версия. Для Ubuntu и Linux Mint — DEB-пакет и AppImage. Для Arma Reforger на Linux нужны Steam и Proton.',
@@ -96,8 +96,8 @@ const staticRussian = {
   'Steam, Workshop, and profile folders are found automatically.': 'Папки Steam, Workshop и профиля определяются автоматически.',
   'Repair tools': 'Восстановление',
   'Reset launcher data and scan the library again when needed.': 'При необходимости можно сбросить данные лаунчера и проверить библиотеку заново.',
-  'Download ArmaLauncher': 'Скачать ArmaLauncher',
-  'Get ArmaLauncher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.': 'Скачай ArmaLauncher для Arma Reforger на Windows 10/11 x64. Установщик создаст ярлыки и поможет выбрать папку, а portable-версия запускается из любого каталога. Затем открой JSON-пресет, проверь моды и запусти игру.',
+  'Download LAR Launcher': 'Скачать LAR Launcher',
+  'Get LAR Launcher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.': 'Скачай LAR Launcher для Arma Reforger на Windows 10/11 x64. Установщик создаст ярлыки и поможет выбрать папку, а portable-версия запускается из любого каталога. Затем открой JSON-пресет, проверь моды и запусти игру.',
   'Standard installation': 'Обычная установка',
   'Windows installer': 'Установщик Windows',
   'Creates shortcuts and lets you choose the installation folder.': 'Создаёт ярлыки и позволяет выбрать папку установки.',
@@ -114,22 +114,22 @@ let language = localStorage.getItem('armaLauncherSiteLanguage') === 'ru' ? 'ru' 
 
 const gallerySlides = [
   {
-    image: '/assets/launcher-workshop.webp?v=classic20260909v47',
+    image: '/assets/launcher-workshop.webp?v=lar20260913v48',
     width: 1380, height: 850,
     title: { en: 'Workshop', ru: 'Мастерская' },
-    alt: { en: 'ArmaLauncher Workshop showing available mods', ru: 'Доступные моды в мастерской ArmaLauncher' }
+    alt: { en: 'LAR Launcher Workshop showing available mods', ru: 'Доступные моды в мастерской LAR Launcher' }
   },
   {
-    image: '/assets/launcher-servers.webp?v=classic20260909v47',
+    image: '/assets/launcher-servers.webp?v=lar20260913v48',
     width: 1380, height: 850,
     title: { en: 'Servers', ru: 'Серверы' },
-    alt: { en: 'ArmaLauncher server browser', ru: 'Список серверов ArmaLauncher' }
+    alt: { en: 'LAR Launcher server browser', ru: 'Список серверов LAR Launcher' }
   },
   {
-    image: '/assets/launcher-mods.webp?v=classic20260909v47',
+    image: '/assets/launcher-mods.webp?v=lar20260913v48',
     width: 1380, height: 850,
     title: { en: 'Mods', ru: 'Моды' },
-    alt: { en: 'ArmaLauncher installed mod library', ru: 'Установленные моды в ArmaLauncher' }
+    alt: { en: 'LAR Launcher installed mod library', ru: 'Установленные моды в LAR Launcher' }
   }
 ];
 let galleryIndex = 0;
@@ -175,11 +175,11 @@ function applyLanguage() {
 
   document.documentElement.lang = language;
   document.title = language === 'ru'
-    ? 'ArmaLauncher — лаунчер для Arma Reforger'
-    : 'ArmaLauncher — Launcher for Arma Reforger';
+    ? 'LAR Launcher — лаунчер для Arma Reforger'
+    : 'LAR Launcher — Launcher for Arma Reforger';
   $('meta[name="description"]').content = language === 'ru'
-    ? 'Скачай ArmaLauncher для Windows и Linux: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
-    : 'Download ArmaLauncher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
+    ? 'Скачай LAR Launcher для Windows и Linux: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
+    : 'Download LAR Launcher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
   for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) $(selector).content = document.title;
   for (const selector of ['meta[property="og:description"]', 'meta[name="twitter:description"]']) $(selector).content = $('meta[name="description"]').content;
   $$('[data-language]').forEach((button) => {
@@ -226,7 +226,7 @@ function renderLauncherGallery() {
   image.height = slide.height;
   image.src = slide.image;
   image.alt = slide.alt[language];
-  $('#launcherGalleryCaption').textContent = `ArmaLauncher / ${slide.title[language].toUpperCase()}`;
+  $('#launcherGalleryCaption').textContent = `LAR Launcher / ${slide.title[language].toUpperCase()}`;
   $('#launcherGalleryCounter').textContent = `${String(galleryIndex + 1).padStart(2, '0')} / ${String(gallerySlides.length).padStart(2, '0')}`;
 
   const previous = $('#galleryPrevious');

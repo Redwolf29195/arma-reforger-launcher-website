@@ -20,7 +20,7 @@ const fixtureRelease = {
     setup: 'x64-Setup.exe', portable: 'x64-Portable.exe',
     deb: 'linux-x64.deb', appimage: 'linux-x64.AppImage'
   }).map(([kind, suffix]) => {
-    const filename = `Arma-Reforger-Launcher-9.8.7-${suffix}`;
+    const filename = `LAR-Launcher-9.8.7-${suffix}`;
     return [kind, { filename, bytes: 12345678, sha256: 'A'.repeat(64), available: true,
       url: `https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v9.8.7/${filename}` }];
   }))
@@ -36,18 +36,18 @@ test('production build has one canonical site, valid metadata and compatible dow
   build();
   const dist = path.join(fixture, 'dist');
   const html = await read(dist, 'index.html');
-  assert.match(html, /<title>ArmaLauncher — Launcher for Arma Reforger<\/title>/);
+  assert.match(html, /<title>LAR Launcher — Launcher for Arma Reforger<\/title>/);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1);
-  assert.match(html, /<h1>ArmaLauncher<\/h1>/);
+  assert.match(html, /<h1>LAR Launcher<\/h1>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/armalauncher.net\/">/);
   assert.doesNotMatch(html, /armalaucher\.com|playit\.plus|pages\.dev|localhost|noindex|nofollow/i);
   for (const property of ['title', 'description', 'url', 'site_name', 'type', 'image']) assert.match(html, new RegExp(`property="og:${property}" content="[^"]+"`));
   const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
   const graph = JSON.parse(json)['@graph'];
   const website = graph.find(item => item['@type'] === 'WebSite');
-  assert.equal(website.name, 'ArmaLauncher');
+  assert.equal(website.name, 'LAR Launcher');
   assert.equal(website.url, 'https://armalauncher.net/');
-  assert.deepEqual(website.alternateName, ['Arma Launcher', 'Arma Reforger Launcher']);
+  assert.deepEqual(website.alternateName, ['LAR', 'LAR Launcher']);
   assert.equal(graph.find(item => item['@type'] === 'SoftwareApplication').operatingSystem, 'Windows 10/11 x64; Linux x64 (Ubuntu / Linux Mint)');
   assert.doesNotMatch(json, /aggregateRating|reviewCount|offers|price|datePublished/);
   const headers = await read(dist, '_headers');
@@ -103,7 +103,7 @@ test('local HTTP serves indexable HTML, real 404s and safe download HEAD request
   const home = await fetch(address);
   assert.equal(home.status, 200);
   assert.equal(home.headers.get('x-robots-tag'), null);
-  assert.match(await home.text(), /<h1>ArmaLauncher<\/h1>/);
+  assert.match(await home.text(), /<h1>LAR Launcher<\/h1>/);
   for (const route of ['/missing-seo-test', '/download', '/assets/']) {
     const response = await fetch(address + route);
     assert.equal(response.status, 404, route);

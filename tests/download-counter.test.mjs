@@ -14,7 +14,7 @@ const formats = {
 const release = {
   version: '9.8.7',
   downloads: Object.fromEntries(Object.entries(formats).map(([kind, suffix]) => {
-    const filename = `Arma-Reforger-Launcher-9.8.7-${suffix}`;
+    const filename = `LAR-Launcher-9.8.7-${suffix}`;
     return [kind, { filename, available: true,
       url: `https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v9.8.7/${filename}` }];
   }))
@@ -28,6 +28,19 @@ const request = (kind = 'setup', options = {}) => {
   return new Request(`https://armalauncher.net/get/${kind}`, { ...options, headers });
 };
 const stats = async database => (await downloadStats(new Request('https://armalauncher.net/api/download-stats'), database)).json();
+
+test('brand change preserves historical downloads and rejects mismatched artifact names', async () => {
+  for (const [version, prefix] of [['0.3.47', 'Arma-Reforger-Launcher'], ['0.3.48', 'LAR-Launcher']]) {
+    const filename = `${prefix}-${version}-x64-Setup.exe`;
+    const url = `https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v${version}/${filename}`;
+    const metadata = { version, downloads: { setup: { filename, url, available: true } } };
+    const response = await downloadFromWebsite(request('setup', { method: 'HEAD' }), 'setup', { loadRelease: async () => metadata });
+    assert.equal(response.status, 302);
+    assert.equal(response.headers.get('location'), url);
+    metadata.downloads.setup.filename = `Other-Product-${version}-x64-Setup.exe`;
+    assert.equal((await downloadFromWebsite(request(), 'setup', { loadRelease: async () => metadata })).status, 503);
+  }
+});
 
 test('counts all four formats from different browsers atomically in the historical buckets', async () => {
   const database = await createLocalCounter(':memory:');

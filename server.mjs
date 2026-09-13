@@ -253,6 +253,6 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`ArmaLauncher website: http://${host}:${server.address().port}`);
+  console.log(`LAR Launcher website: http://${host}:${server.address().port}`);
   console.log(`Release directory: ${releaseDirectory}`);
 });

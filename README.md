@@ -1,8 +1,8 @@
-# ArmaLauncher website
+# LAR Launcher website
 
-<img src="public/assets/app-icon-512.png" width="128" height="128" alt="Arma Reforger Launcher logo">
+<img src="public/assets/app-icon-512.png" width="128" height="128" alt="LAR Launcher logo">
 
-Source for the ArmaLauncher download website published at
+Source for the LAR Launcher download website published at
 `https://armalauncher.net` on Cloudflare Pages.
 
 The repository contains the website source and deployment helpers. Launcher
@@ -136,7 +136,7 @@ or authentication service in this website repository.
 
 The only indexable page is `/`. Downloads are part of that page at `/#download`,
 so the sitemap deliberately contains only the homepage. The HTML includes one
-ArmaLauncher H1, canonical URL, description, Open Graph, Twitter card and
+LAR Launcher H1, canonical URL, description, Open Graph, Twitter card and
 WebSite/SoftwareApplication JSON-LD. All are available without JavaScript.
 The EN/RU switch keeps the brand and primary URL consistent.
 

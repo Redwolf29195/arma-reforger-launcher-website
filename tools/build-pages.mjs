@@ -1,3 +1,4 @@
+import { releaseArtifactPrefix } from '../lib/release-artifact-name.mjs';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,7 +25,7 @@ await mkdir(output, { recursive: true });
 await cp(path.join(root, 'public'), output, { recursive: true });
 let html = await readFile(path.join(output, 'index.html'), 'utf8');
 for (const [kind, download] of Object.entries(release.downloads)) {
-  if (!download.filename.startsWith(`Arma-Reforger-Launcher-${release.version}-`)
+  if (!download.filename.startsWith(`${releaseArtifactPrefix(release.version)}-`)
       || path.basename(download.filename) !== download.filename) {
     throw new Error(`Invalid ${kind} download filename`);
   }
