@@ -1,4 +1,5 @@
 import { releaseArtifactPrefix } from '../lib/release-artifact-name.mjs';
+import { syncFavicon } from './sync-favicon.mjs';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +24,7 @@ const redirects = [
 
 await mkdir(output, { recursive: true });
 await cp(path.join(root, 'public'), output, { recursive: true });
+await syncFavicon(output);
 let html = await readFile(path.join(output, 'index.html'), 'utf8');
 for (const [kind, download] of Object.entries(release.downloads)) {
   if (!download.filename.startsWith(`${releaseArtifactPrefix(release.version)}-`)
@@ -72,6 +74,10 @@ ${isPreview ? '  X-Robots-Tag: noindex\n' : ''}/404
   X-Robots-Tag: noindex
 /404.html
   X-Robots-Tag: noindex
+/favicon.ico
+  Cache-Control: public, max-age=0, must-revalidate
+/favicon.png
+  Cache-Control: public, max-age=0, must-revalidate
 /release.json
   Cache-Control: no-cache
   X-Robots-Tag: noindex

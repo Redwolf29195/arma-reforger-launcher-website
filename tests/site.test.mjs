@@ -58,6 +58,15 @@ test('production build has one canonical site, valid metadata and compatible dow
   assert.match(robots, /Allow: \//);
   assert.match(robots, /Sitemap: https:\/\/armalauncher.net\/sitemap.xml/);
   assert.doesNotMatch(robots, /Disallow: \//);
+  const approvedIcon = await readFile(path.join(dist, 'assets/app-icon-192.png'));
+  assert.match(html, /rel="icon" href="\/favicon.png" type="image\/png" sizes="192x192"/);
+  assert.deepEqual(await readFile(path.join(dist, 'favicon.png')), approvedIcon);
+  const ico = await readFile(path.join(dist, 'favicon.ico'));
+  assert.equal(ico.readUInt16LE(2), 1);
+  assert.equal(ico.readUInt16LE(4), 1);
+  assert.equal(ico.readUInt32LE(14), approvedIcon.length);
+  assert.equal(ico.readUInt32LE(18), 22);
+  assert.deepEqual(ico.subarray(22), approvedIcon);
   const sitemap = await read(dist, 'sitemap.xml');
   assert.deepEqual([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]), ['https://armalauncher.net/']);
   assert.match(await read(dist, '404.html'), /name="robots" content="noindex"/);
@@ -104,6 +113,13 @@ test('local HTTP serves indexable HTML, real 404s and safe download HEAD request
   assert.equal(home.status, 200);
   assert.equal(home.headers.get('x-robots-tag'), null);
   assert.match(await home.text(), /<h1>LAR Launcher<\/h1>/);
+  for (const [route, contentType] of [['/favicon.png', 'image/png'], ['/favicon.ico', 'image/x-icon']]) {
+    const response = await fetch(address + route, { headers: { 'User-Agent': 'Googlebot-Image/1.0' } });
+    assert.equal(response.status, 200, route);
+    assert.equal(response.headers.get('content-type'), contentType);
+    assert.equal(response.headers.get('x-robots-tag'), null);
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), await readFile(path.join(root, 'public', route)));
+  }
   for (const route of ['/missing-seo-test', '/download', '/assets/']) {
     const response = await fetch(address + route);
     assert.equal(response.status, 404, route);

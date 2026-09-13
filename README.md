@@ -180,6 +180,14 @@ indexing, CSP hashes, download routing, metadata and real HTTP 404 responses.
 
 ## Google Search Console
 
+The homepage uses stable `/favicon.png` and `/favicon.ico` URLs. Both represent
+the approved transparent 192px LAR icon. Pages builds regenerate them from
+`public/assets/app-icon-192.png`; after changing that source, run
+`node tools/sync-favicon.mjs` to update the copies used by the local server.
+Keep the favicon URLs stable across launcher releases. A changed icon or title
+appears in Google after it recrawls and processes the homepage; deployment alone
+does not refresh the existing search result immediately.
+
 1. Add a Domain property named `armalauncher.net` (without a scheme or path).
 2. Copy the TXT verification value that Google actually provides. In Cloudflare,
    open this domain's DNS records, add type TXT, name `@`, that exact content,
