@@ -29,6 +29,13 @@ Pages redirects, and links installers directly to their versioned GitHub
 release. No local Node process, Playit tunnel, or running PC is required.
 The existing local deployment remains supported by `npm start`.
 
+`public/motion.js` and `public/motion.css` add the approved hero, reveal,
+gallery and hover animations without changing the original layout or download
+logic. Motion respects `prefers-reduced-motion`; the hero's particle loop and
+ambient effects pause when it leaves the viewport or the page is hidden.
+The build versions both animation assets by content hash. Local comparison
+controls and preview preferences are not included in the public site.
+
 When publishing a new launcher release, update `release.json` and push it to
 this repository. Cloudflare rebuilds the site from that metadata.
 

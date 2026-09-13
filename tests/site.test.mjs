@@ -41,6 +41,11 @@ test('production build has one canonical site, valid metadata and compatible dow
   assert.match(html, /<h1>LAR Launcher<\/h1>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/armalauncher.net\/">/);
   assert.doesNotMatch(html, /armalaucher\.com|playit\.plus|pages\.dev|localhost|noindex|nofollow/i);
+  for (const asset of ['app.js', 'styles.css', 'motion.js', 'motion.css']) {
+    const digest = createHash('sha256').update(await readFile(path.join(dist, asset))).digest('hex').slice(0, 12);
+    assert.ok(html.includes(`/${asset}?v=${digest}`), `${asset} is present and cache-busted`);
+  }
+  assert.doesNotMatch(html, /motion-bootstrap|local-motion-preview/);
   for (const property of ['title', 'description', 'url', 'site_name', 'type', 'image']) assert.match(html, new RegExp(`property="og:${property}" content="[^"]+"`));
   const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
   const graph = JSON.parse(json)['@graph'];

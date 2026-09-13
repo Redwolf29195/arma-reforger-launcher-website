@@ -51,7 +51,7 @@ for (const suffix of ['.blockmap', '.algz.json']) {
 // A build pins filenames to their release so later releases cannot break existing links.
 html = html.replace(/(<[^>]+data-release-version[^>]*>)[^<]+/g, `$1${release.version}`);
 html = html.replace(/data-copy-hash="[^"]*"/, `data-copy-hash="${release.downloads.setup.sha256}"`);
-for (const asset of ['app.js', 'styles.css']) {
+for (const asset of ['app.js', 'styles.css', 'motion.js', 'motion.css']) {
   const digest = createHash('sha256').update(await readFile(path.join(output, asset))).digest('hex').slice(0, 12);
   html = html.replaceAll(new RegExp(`(/${asset.replace('.', '\\.')})(?:\\?v=[^"\\s]*)?(?=")`, 'g'), `$1?v=${digest}`);
 }
