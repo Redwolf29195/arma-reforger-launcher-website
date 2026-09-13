@@ -75,9 +75,9 @@ ${isPreview ? '  X-Robots-Tag: noindex\n' : ''}/404
 /404.html
   X-Robots-Tag: noindex
 /favicon.ico
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: no-cache
 /favicon.png
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: no-cache
 /release.json
   Cache-Control: no-cache
   X-Robots-Tag: noindex
