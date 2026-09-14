@@ -36,7 +36,7 @@ test('production build has one canonical site, valid metadata and compatible dow
   build();
   const dist = path.join(fixture, 'dist');
   const html = await read(dist, 'index.html');
-  assert.match(html, /<title>LAR Launcher — Launcher for Arma Reforger<\/title>/);
+  assert.match(html, /<title>LAR Launcher<\/title>/);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1);
   assert.match(html, /<h1>LAR Launcher<\/h1>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/armalauncher.net\/">/);

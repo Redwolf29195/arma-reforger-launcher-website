@@ -55,12 +55,12 @@ const staticRussian = {
   'Home': 'Главная',
   'Presets': 'Пресеты',
   'Control': 'Контроль',
-  'A launcher for Arma Reforger': 'Лаунчер для Arma Reforger',
-  'Browse servers, manage your mod presets and launch Arma Reforger with the right mod set.': 'Выбирай серверы, управляй пресетами и запускай Arma Reforger с нужным набором модов.',
+  'Servers. Mods. Presets.': 'Серверы. Моды. Пресеты.',
+  'Browse servers, manage your mod presets and launch the game with the right mod set.': 'Выбирай серверы, управляй пресетами и запускай игру с нужным набором модов.',
   'LAR Launcher brings the server browser, Workshop and installed mods into one desktop app. Keep a preset for each server or group so you can check your mod list before joining a session.': 'LAR Launcher объединяет список серверов, Workshop и установленные моды в одном приложении. Сохраняй пресеты для разных серверов и групп, чтобы проверять набор модов перед игрой.',
   'Download for Windows': 'Скачать для Windows',
   'Download for Linux': 'Скачать для Linux',
-  'Choose your system. Windows has an installer and a portable version. For Ubuntu and Linux Mint, use the DEB package or AppImage. Arma Reforger on Linux requires Steam and Proton.': 'Выбери свою систему. Для Windows есть установщик и portable-версия. Для Ubuntu и Linux Mint — DEB-пакет и AppImage. Для Arma Reforger на Linux нужны Steam и Proton.',
+  'Choose your system. Windows has an installer and a portable version. For Ubuntu and Linux Mint, use the DEB package or AppImage. On Linux, the game requires Steam and Proton.': 'Выбери свою систему. Для Windows есть установщик и portable-версия. Для Ubuntu и Linux Mint — DEB-пакет и AppImage. Для игры на Linux нужны Steam и Proton.',
   'Recommended for Ubuntu and Linux Mint': 'Рекомендуется для Ubuntu и Linux Mint',
   'Linux installer': 'Установщик Linux',
   'Installs the launcher and adds it to your applications menu.': 'Устанавливает лаунчер и добавляет его в меню приложений.',
@@ -83,7 +83,7 @@ const staticRussian = {
   'Open a JSON file or paste a list from': 'Открой JSON-файл или вставь список из',
   'Check the mods': 'Проверь моды',
   'The launcher flags missing mods and version differences before launch.': 'До запуска лаунчер покажет, каких модов не хватает и где отличаются версии.',
-  'Launch Arma Reforger': 'Запусти Арму Рефорджер',
+  'Launch the game': 'Запусти игру',
   'Only mods from the selected preset are enabled for this launch.': 'Для этого запуска будут включены только моды из выбранного пресета.',
   '03 / CONTROL': '03 / КОНТРОЛЬ',
   'Works with large libraries.': 'Работает с большой библиотекой.',
@@ -97,7 +97,7 @@ const staticRussian = {
   'Repair tools': 'Восстановление',
   'Reset launcher data and scan the library again when needed.': 'При необходимости можно сбросить данные лаунчера и проверить библиотеку заново.',
   'Download LAR Launcher': 'Скачать LAR Launcher',
-  'Get LAR Launcher for Arma Reforger on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.': 'Скачай LAR Launcher для Arma Reforger на Windows 10/11 x64. Установщик создаст ярлыки и поможет выбрать папку, а portable-версия запускается из любого каталога. Затем открой JSON-пресет, проверь моды и запусти игру.',
+  'Get LAR Launcher on Windows 10/11 x64. Choose the installer for shortcuts and a setup wizard, or the portable EXE to run it from any folder. Then open your JSON preset, check the mods and launch the game.': 'Скачай LAR Launcher на Windows 10/11 x64. Установщик создаст ярлыки и поможет выбрать папку, а portable-версия запускается из любого каталога. Затем открой JSON-пресет, проверь моды и запусти игру.',
   'Standard installation': 'Обычная установка',
   'Windows installer': 'Установщик Windows',
   'Creates shortcuts and lets you choose the installation folder.': 'Создаёт ярлыки и позволяет выбрать папку установки.',
@@ -114,19 +114,19 @@ let language = localStorage.getItem('armaLauncherSiteLanguage') === 'ru' ? 'ru' 
 
 const gallerySlides = [
   {
-    image: '/assets/launcher-workshop.webp?v=amber20260914v49',
+    image: '/assets/launcher-workshop.webp?v=help20260914v54',
     width: 1380, height: 850,
     title: { en: 'Workshop', ru: 'Мастерская' },
     alt: { en: 'LAR Launcher Workshop showing available mods', ru: 'Доступные моды в мастерской LAR Launcher' }
   },
   {
-    image: '/assets/launcher-servers.webp?v=amber20260914v49',
+    image: '/assets/launcher-servers.webp?v=help20260914v54',
     width: 1380, height: 850,
     title: { en: 'Servers', ru: 'Серверы' },
     alt: { en: 'LAR Launcher server browser', ru: 'Список серверов LAR Launcher' }
   },
   {
-    image: '/assets/launcher-mods.webp?v=amber20260914v49',
+    image: '/assets/launcher-mods.webp?v=help20260914v54',
     width: 1380, height: 850,
     title: { en: 'Mods', ru: 'Моды' },
     alt: { en: 'LAR Launcher installed mod library', ru: 'Установленные моды в LAR Launcher' }
@@ -174,12 +174,10 @@ function applyLanguage() {
   });
 
   document.documentElement.lang = language;
-  document.title = language === 'ru'
-    ? 'LAR Launcher — лаунчер для Arma Reforger'
-    : 'LAR Launcher — Launcher for Arma Reforger';
+  document.title = 'LAR Launcher';
   $('meta[name="description"]').content = language === 'ru'
-    ? 'Скачай LAR Launcher для Windows и Linux: выбирай серверы Arma Reforger, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
-    : 'Download LAR Launcher for Windows and Linux. Browse Arma Reforger servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
+    ? 'Скачай LAR Launcher для Windows и Linux: выбирай серверы, импортируй JSON-пресеты, проверяй моды и запускай игру с выбранным набором.'
+    : 'Download LAR Launcher for Windows and Linux. Browse servers, import JSON mod presets, check installed mods and launch the game with your selected mod set.';
   for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) $(selector).content = document.title;
   for (const selector of ['meta[property="og:description"]', 'meta[name="twitter:description"]']) $(selector).content = $('meta[name="description"]').content;
   $$('[data-language]').forEach((button) => {
