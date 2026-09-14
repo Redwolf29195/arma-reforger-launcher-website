@@ -1,34 +1,34 @@
 {
-  "version": "0.3.48",
-  "publishedAt": "2026-09-13T13:58:30Z",
+  "version": "0.3.49",
+  "publishedAt": "2026-09-14T14:32:33Z",
   "platform": "Windows 10/11 x64; Linux x64 (Ubuntu / Linux Mint)",
   "downloads": {
     "setup": {
-      "filename": "LAR-Launcher-0.3.48-x64-Setup.exe",
-      "bytes": 84984719,
-      "sha256": "A7CA08C890CCDFA7CD99A5E2D3937391F36679117966B461FA9340CC979E141A",
-      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.48/LAR-Launcher-0.3.48-x64-Setup.exe",
+      "filename": "LAR-Launcher-0.3.49-x64-Setup.exe",
+      "bytes": 85114688,
+      "sha256": "72E059157A142C53E90D7B312EE68E7B12B93CE038D319C32750AA12AEBFBEEF",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.49/LAR-Launcher-0.3.49-x64-Setup.exe",
       "available": true
     },
     "portable": {
-      "filename": "LAR-Launcher-0.3.48-x64-Portable.exe",
-      "bytes": 84714536,
-      "sha256": "FA9C2B55F02AE77BF2FC7A772CA01075DB86E47D959678A9D61E98C14D538FA9",
-      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.48/LAR-Launcher-0.3.48-x64-Portable.exe",
+      "filename": "LAR-Launcher-0.3.49-x64-Portable.exe",
+      "bytes": 84854213,
+      "sha256": "0EBCE19981DE5A913F28DDD2194D49AB0C7DA622D9F5E7345BD50AC03BC022DF",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.49/LAR-Launcher-0.3.49-x64-Portable.exe",
       "available": true
     },
     "deb": {
-      "filename": "LAR-Launcher-0.3.48-linux-x64.deb",
-      "bytes": 93068492,
-      "sha256": "02E36734AFDE49733CCD71C2DE412E70EE489679E9F835879D1BFA14AF2EF02C",
-      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.48/LAR-Launcher-0.3.48-linux-x64.deb",
+      "filename": "LAR-Launcher-0.3.49-linux-x64.deb",
+      "bytes": 93232472,
+      "sha256": "52B588A5EF8B1FB88DAC912F33633ED8FCF1F3F6886E1FE9EBE1DD92031C35E8",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.49/LAR-Launcher-0.3.49-linux-x64.deb",
       "available": true
     },
     "appimage": {
-      "filename": "LAR-Launcher-0.3.48-linux-x64.AppImage",
-      "bytes": 118552719,
-      "sha256": "979CD0BBD9B39E0F9D73E06D4413CB0DFFD47D04222787BD78F504BAE62B33FD",
-      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.48/LAR-Launcher-0.3.48-linux-x64.AppImage",
+      "filename": "LAR-Launcher-0.3.49-linux-x64.AppImage",
+      "bytes": 118708711,
+      "sha256": "EC80261FEA195335117A75F5F7A44E0461A571023D5AC58979043B2FEB149AD0",
+      "url": "https://github.com/Redwolf29195/arma-reforger-launcher-updates/releases/download/v0.3.49/LAR-Launcher-0.3.49-linux-x64.AppImage",
       "available": true
     }
   }

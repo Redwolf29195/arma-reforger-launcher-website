@@ -188,7 +188,7 @@ indexing, CSP hashes, download routing, metadata and real HTTP 404 responses.
 ## Google Search Console
 
 The homepage uses stable `/favicon.png` and `/favicon.ico` URLs. Both represent
-the approved transparent 192px LAR icon. Pages builds regenerate them from
+the approved amber (#F5A623), transparent 192px LAR icon. Pages builds regenerate them from
 `public/assets/app-icon-192.png`; after changing that source, run
 `node tools/sync-favicon.mjs` to update the copies used by the local server.
 Keep the favicon URLs stable across launcher releases. A changed icon or title
